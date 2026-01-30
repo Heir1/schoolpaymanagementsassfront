@@ -1,0 +1,220 @@
+> **Context & Goal**
+> Design and implement an **ultra-professional landing page** for **SchoolPay**, a secure school fee management and payment platform **exclusively designed for primary and secondary schools (not universities)**.
+> The landing page must clearly explain **what the application does**, inspire **trust, simplicity, security, and clarity**, and target **school principals, administrators, accountants, and parents**.
+
+---
+
+### 🛠 Tech Stack (mandatory)
+
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* Framer Motion (soft animations only)
+* Particles.js (very subtle, optional in hero background)
+* Lucide Icons
+* SVG illustrations
+
+---
+
+### 🎨 Design Direction (VERY IMPORTANT)
+
+* **Institutional, reassuring, and educational tone**
+* No aggressive fintech or startup/crypto look
+* Soft, calm, and professional UI
+
+#### Color Palette
+
+* Educational blue (trust & reliability)
+* Soft green (stability & responsibility)
+* Light yellow accents (education, subtle, non-childish)
+* Light backgrounds, rounded corners, soft shadows
+
+👉 Visual message to communicate:
+
+> “This application is safe to manage children and school finances.”
+
+---
+
+### 🧱 Page Structure & Sections
+
+#### 1️⃣ Hero Section
+
+* Clear headline stating the purpose
+* Strategic sentence (mandatory):
+
+> **“SchoolPay is a secure school fee management and payment platform designed exclusively for primary and secondary schools.”**
+
+* CTA buttons:
+
+  * “Request a Demo”
+  * “Contact Us for Your School”
+
+* Subtle animated background (particles or gradients)
+
+* Calm Framer Motion entrance animations
+
+---
+
+#### 2️⃣ What SchoolPay Does (Simple Explanation)
+
+Explain clearly:
+
+* Student registration
+* School fee configuration
+* Transparent payment tracking
+* Receipts & payment history
+* Role-based access (school staff & parents)
+
+Use **icons + short text**, no technical jargon.
+
+---
+
+#### 3️⃣ Before / After SchoolPay (Comparison Section)
+
+Two columns:
+
+**Before SchoolPay**
+
+* Paper notebooks
+* Payment disputes
+* Late payments
+* Incomplete student records
+
+**With SchoolPay**
+
+* Clear & traceable payments
+* Student-based history
+* Parents informed
+* School administration in control
+
+Very visual, very simple.
+
+---
+
+#### 4️⃣ Transparency for Parents
+
+Dedicated section titled:
+**“Transparency for Parents”**
+
+Features:
+
+* View school fees
+* View payment history
+* Download receipts
+* Fewer conflicts with schools
+
+UI:
+
+* Parent card
+* Student card
+* “Payment Validated” badge
+
+---
+
+#### 5️⃣ Simple Data Visualization
+
+NO complex dashboards.
+
+Show mini indicators:
+
+* Total expected fees
+* Total collected
+* Remaining balance
+* Students fully paid
+
+Simple charts, large readable numbers, calm colors.
+
+---
+
+#### 6️⃣ Security & Responsibility
+
+Mandatory institutional section:
+
+* Payment history & traceability
+* Audit logs
+* Role-based access (principal, accountant)
+* Secure data management
+
+Language must be **simple and reassuring**, not technical.
+
+---
+
+#### 7️⃣ Offline / Low Connectivity Friendly (Africa-focused)
+
+Include a message:
+
+> “Designed to work even with limited Internet connectivity.”
+
+Use:
+
+* Low network icon
+* Local validation concept
+
+---
+
+#### 8️⃣ Call-To-Action (School-Oriented)
+
+Avoid startup-style CTAs.
+
+Use only:
+
+* “Request a Demonstration”
+* “Contact Our Team”
+* “Deploy SchoolPay in My School”
+
+---
+
+#### 9️⃣ Footer (Institutional)
+
+* Contact information
+* Address (or placeholder)
+* Legal mentions
+* Mandatory text:
+
+  > “Solution dedicated to primary and secondary schools”
+
+---
+
+### 🎥 Animations & UX Rules
+
+* Framer Motion used only for:
+
+  * Section fade-in
+  * Soft card hover
+* Slow, calm transitions
+* Accessibility-friendly spacing & typography
+
+---
+
+### 🧠 Illustration Style
+
+* Educational & human
+* No futuristic or corporate abstract art
+* Neutral characters:
+
+  * School
+  * Teacher
+  * Parent
+  * Student
+* SVG-based illustrations preferred
+
+---
+
+### 🧩 Bonus Enhancements (Optional but Recommended)
+
+* Light testimonials from school administrators
+* “How it works in 3 steps” section
+* Subtle grid or gradient background
+* Professional typography hierarchy
+* Clear mobile-first responsiveness
+
+---
+
+### 🚫 Explicit Exclusions
+
+* No university features
+* No higher education references
+* No crypto/fintech aggressive design
+* No complex dashboards
+
+---

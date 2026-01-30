@@ -1,0 +1,179 @@
+**Context**
+We have completed the landing page.
+Now we are implementing **User Management & Authentication** for a school payment platform designed **exclusively for primary and secondary schools**.
+
+The backend API is already available.
+The frontend must integrate authentication, roles, permissions, and protected routes.
+
+---
+
+## Authentication Endpoints
+
+### 1️⃣ Login
+
+**Endpoint**
+
+```
+POST /api/v1/auth/login
+```
+
+**Request body**
+
+```json
+{
+  "phone_or_email": "test@gmail.com",
+  "password": "j18d1m*01"
+}
+```
+
+**Successful response**
+
+```json
+{
+  "status": "success",
+  "user": {
+    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+    "full_name": "Test",
+    "phone_or_email": "test@gmail.com",
+    "avatar_url": null,
+    "is_email": true,
+    "is_phone": false,
+    "created_at": "2025-12-17T18:23:56.000000Z",
+    "role": {
+      "id": 2,
+      "name": "school_admin",
+      "description": "Administrator of a specific school. Can manage classes, teachers, students, fees, and school settings."
+    }
+  },
+  "message": "Login successful",
+  "token": "41|OHOJn2VFckr3nPtkyWSzYyjPb5XNNpNWnvHEmG1k3f40b1d5",
+  "token_type": "Bearer",
+  "expires_in": null
+}
+```
+
+⚠️ Another possible role:
+
+```json
+{
+  "role": {
+    "id": 1,
+    "name": "superadmin",
+    "description": "System administrator with full access to all schools, users, and global configuration."
+  }
+}
+
+and so on
+```
+
+---
+
+### 2️⃣ Logout
+
+**Endpoint**
+
+```
+POST /api/v1/auth/logout
+```
+
+**Response**
+
+```json
+{
+  "status": "success",
+  "message": "Logout successful"
+}
+```
+
+---
+
+### 3️⃣ Get Authenticated User Profile
+
+**Endpoint**
+
+```
+GET /api/v1/auth/me
+```
+
+**Response**
+
+```json
+{
+  "status": "success",
+  "user": {
+    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+    "full_name": "Test",
+    "phone_or_email": "test@gmail.com",
+    "avatar_url": null,
+    "is_email": true,
+    "is_phone": false,
+    "created_at": "2025-12-17T18:23:56.000000Z",
+    "role": {
+      "id": 2,
+      "name": "school_admin",
+      "description": "Administrator of a specific school."
+    },
+    "permissions": []
+  },
+  "message": "User retrieved successfully"
+}
+```
+
+---
+
+## 👨‍👩‍👧 Public Registration for Parents
+
+Parents can register **without authentication**.
+
+### 4️⃣ Register Parent (Public)
+
+**Endpoint**
+
+```
+POST /api/v1/auth/register-parent
+```
+
+**Request body**
+
+```json
+{
+  "full_name": "Heritier N'Kele",
+  "phone_or_email": "nkeleheir@gmail.com",
+  "password": "0998521480h",
+  "password_confirmation": "0998521480h"
+}
+```
+
+---
+
+## 🧠 Frontend Requirements
+
+Please implement:
+
+### ✅ Authentication Logic
+
+* Login form
+* Store token securely (HTTP header: `Authorization: Bearer <token>`)
+* Logout handling
+* Auto-fetch authenticated user (`/auth/me`)
+
+### ✅ Role-Based Access Control
+
+* `superadmin`
+* `school_admin`
+* `parent`
+
+Each role must see **only its authorized pages and actions**.
+
+### ✅ Protected Routes
+
+* Block unauthenticated access
+* Redirect based on role
+* Handle expired or invalid tokens gracefully
+
+### ✅ UX & UI
+
+* Institutional, calm, and professional design
+* Clear error messages
+* Loading states during auth requests
+* No fintech-aggressive animations

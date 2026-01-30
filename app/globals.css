@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --schoolpay-blue: #1e5a8e;
+  --schoolpay-green: #2d8a5e;
+  --schoolpay-accent: #0d9488;
+  --schoolpay-bg: #f8fafc;
+  --schoolpay-text: #1e293b;
+  --schoolpay-text-muted: #64748b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(13, 148, 136, 0.2);
+  color: inherit;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-schoolpay-accent ring-offset-2 ring-offset-slate-50;
+}
+
+/* Section label utility */
+@layer components {
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-section text-schoolpay-accent mb-3;
+  }
+  .section-title {
+    @apply font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight;
+  }
+  .section-desc {
+    @apply text-slate-600 text-lg leading-relaxed max-w-prose mx-auto;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

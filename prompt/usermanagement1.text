@@ -1,0 +1,626 @@
+GET : /api/v1/admin/users
+
+"
+  {
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": "73fb8d84-514f-4785-b81f-c544f64084ea",
+                "full_name": "N'kele Ngoma",
+                "phone_or_email": "nkeletest@gmail.com",
+                "avatar_url": null,
+                "email_verified_at": "2026-01-30T14:17:12.000000Z",
+                "created_at": "2026-01-30T14:17:12.000000Z",
+                "updated_at": "2026-01-30T14:17:12.000000Z",
+                "roles": [
+                    {
+                        "id": 7,
+                        "role_id": 6,
+                        "role_name": "parent",
+                        "school_id": null,
+                        "school_name": null
+                    }
+                ],
+                "is_parent": true
+            },
+            {
+                "id": "d6531b68-1b72-4b7c-b494-04536bacda71",
+                "full_name": "Test",
+                "phone_or_email": "test1@gmail.com",
+                "avatar_url": "http://localhost/storage/avatars/5e9c6460-44de-400d-8889-9fa6b90f21fc.jpg",
+                "email_verified_at": "2025-12-17T18:25:02.000000Z",
+                "created_at": "2025-12-17T18:25:02.000000Z",
+                "updated_at": "2025-12-17T18:25:02.000000Z",
+                "roles": [
+                    {
+                        "id": 6,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 1,
+                        "school_name": "École Primaire Sainte Thérèse"
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                "full_name": "Test",
+                "phone_or_email": "test@gmail.com",
+                "avatar_url": null,
+                "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                "created_at": "2025-12-17T18:23:56.000000Z",
+                "updated_at": "2025-12-17T19:06:02.000000Z",
+                "roles": [
+                    {
+                        "id": 5,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 1,
+                        "school_name": "École Primaire Sainte Thérèse"
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                "full_name": "Héritier N'kele",
+                "phone_or_email": "nkeleheir@gmail.com",
+                "avatar_url": "http://localhost/storage/avatars/590c0612-fa3b-48ff-846e-b0e8fc1e0944.jpg",
+                "email_verified_at": "2025-12-17T17:21:09.000000Z",
+                "created_at": "2025-12-17T17:21:09.000000Z",
+                "updated_at": "2025-12-17T19:48:36.000000Z",
+                "roles": [
+                    {
+                        "id": 4,
+                        "role_id": 1,
+                        "role_name": "superadmin",
+                        "school_id": null,
+                        "school_name": null
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "8d680718-bb94-4ed6-a8e9-b7a66168e7e6",
+                "full_name": "John Doe",
+                "phone_or_email": "jdoe@gmail1.com",
+                "avatar_url": "http://localhost/storage/avatars/938c94a3-9ac2-4989-988d-ff591cc778fd.jpg",
+                "email_verified_at": "2025-12-17T15:00:39.000000Z",
+                "created_at": "2025-12-17T15:00:39.000000Z",
+                "updated_at": "2025-12-18T18:19:07.000000Z",
+                "roles": [
+                    {
+                        "id": 3,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 4,
+                        "school_name": "Collège Boboto"
+                    }
+                ],
+                "is_parent": false
+            }
+        ],
+        "first_page_url": "http://localhost:8000/api/v1/admin/users?page=1",
+        "from": 1,
+        "last_page": 1,
+        "last_page_url": "http://localhost:8000/api/v1/admin/users?page=1",
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost:8000/api/v1/admin/users?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "next_page_url": null,
+        "path": "http://localhost:8000/api/v1/admin/users",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": 5,
+        "total": 5
+    },
+    "message": "Liste des utilisateurs récupérée avec succès"
+}
+"
+
+POST : /api/v1/admin/users avec un body formdata pour créer le compte du school_admin : full_name, phone_or_email, role_id = 2 (par défaut), school_id (
+  GET /api/v1/admin/schools : {
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 13,
+                "name": "Lycée Technique de Yaoundé caméroun",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Bastos, Yaoundé",
+                "phone": "+237699887766",
+                "school_years_count": 0,
+                "created_by": {
+                    "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                    "name": "Héritier N'kele"
+                },
+                "updated_by": {
+                    "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                    "name": "Héritier N'kele"
+                },
+                "created_at": "2025-12-18T18:43:05.000000Z",
+                "updated_at": "2025-12-18T18:51:55.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Commune de Lingwala, Kinshasa",
+                "phone": "+243 81 700 0011",
+                "school_years_count": 2,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 2,
+                "name": "École Primaire de la Gombe",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Avenue de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0013",
+                "school_years_count": 3,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 3,
+                "name": "École Primaire Saint Michel",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Commune de Kasa-Vubu, Kinshasa",
+                "phone": "+243 81 700 0014",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 4,
+                "name": "Collège Boboto",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0002",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 5,
+                "name": "Lycée Prince de Liège",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue de la Justice, Gombe, Kinshasa",
+                "phone": "+243 81 700 0001",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 6,
+                "name": "École Française de Kinshasa (EFK)",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Quartier Binza, Kinshasa",
+                "phone": "+243 81 700 0003",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 7,
+                "name": "Lycée Français René Descartes",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0004",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 8,
+                "name": "Institut de la Gombe",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue des Aviateurs, Gombe, Kinshasa",
+                "phone": "+243 81 700 0005",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 9,
+                "name": "Complexe Scolaire Mgr. Shaumba",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de Ngaliema, Kinshasa",
+                "phone": "+243 81 700 0007",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 10,
+                "name": "École Secondaire Monseigneur Pelé",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue de l'OUA, Kinshasa",
+                "phone": "+243 81 700 0008",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 11,
+                "name": "Institut Motema Mpiko",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de Kalamu, Kinshasa",
+                "phone": "+243 81 700 0009",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 12,
+                "name": "Collège Saint Joseph",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue Batetela, Kinshasa",
+                "phone": "+243 81 700 0012",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            }
+        ],
+        "first_page_url": "http://localhost:8000/api/v1/admin/schools?page=1",
+        "from": 1,
+        "last_page": 1,
+        "last_page_url": "http://localhost:8000/api/v1/admin/schools?page=1",
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost:8000/api/v1/admin/schools?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "next_page_url": null,
+        "path": "http://localhost:8000/api/v1/admin/schools",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": 13,
+        "total": 13
+    },
+    "message": "Liste des écoles récupérée avec succès"
+}
+) et avatar
+
+
+
+PUT : /api/v1/admin/users/8d680718-bb94-4ed6-a8e9-b7a66168e7e6 avec un body formdata pour update le compte du school_admin
+
+
+PUT : /api/v1/admin/users/change-password : 
+{
+    "current_password": "0998521480r",
+    "new_password": "0998521480h",
+    "new_password_confirmation": "0998521480h"
+}
+
+error response : 
+
+{
+    "message": "Le mot de passe actuel est incorrect.",
+    "errors": {
+        "current_password": [
+            "Le mot de passe actuel est incorrect."
+        ]
+    }
+}
+
+{
+    "message": "Le nouveau mot de passe doit être différent de l'ancien.",
+    "errors": {
+        "new_password": [
+            "Le nouveau mot de passe doit être différent de l'ancien."
+        ]
+    }
+}
+
+
+success : 
+
+{
+    "status": "success",
+    "message": "Mot de passe changé avec succès.",
+    "data": {
+        "user_id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+        "full_name": "Héritier N'kele",
+        "password_changed_at": "2026-01-30T15:04:27.974989Z",
+        "logout_other_devices": false
+    }
+}
+
+
+
+GET : /api/v1/admin/users/8d680718-bb94-4ed6-a8e9-b7a66168e7e6 user Profile
+
+{
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": "b0d7da83-6435-4813-93b2-42c291e72f90",
+                "full_name": "Ouria N'kele",
+                "phone_or_email": "hnkele@gmail.com",
+                "avatar_url": "http://localhost/storage/avatars/1782203e-5606-4bf4-95f8-3e4b22692c4c.jpg",
+                "email_verified_at": "2026-01-30T15:58:42.000000Z",
+                "created_at": "2026-01-30T15:58:42.000000Z",
+                "updated_at": "2026-01-30T16:23:34.000000Z",
+                "deleted_at": "2026-01-30T16:23:34.000000Z",
+                "is_deleted": true,
+                "roles": [
+                    {
+                        "id": 8,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 5,
+                        "school_name": "Lycée Prince de Liège"
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "73fb8d84-514f-4785-b81f-c544f64084ea",
+                "full_name": "N'kele Ngoma",
+                "phone_or_email": "nkeletest@gmail.com",
+                "avatar_url": null,
+                "email_verified_at": "2026-01-30T14:17:12.000000Z",
+                "created_at": "2026-01-30T14:17:12.000000Z",
+                "updated_at": "2026-01-30T14:17:12.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "roles": [
+                    {
+                        "id": 7,
+                        "role_id": 6,
+                        "role_name": "parent",
+                        "school_id": null,
+                        "school_name": null
+                    }
+                ],
+                "is_parent": true
+            },
+            {
+                "id": "d6531b68-1b72-4b7c-b494-04536bacda71",
+                "full_name": "Test",
+                "phone_or_email": "test1@gmail.com",
+                "avatar_url": "http://localhost/storage/avatars/5e9c6460-44de-400d-8889-9fa6b90f21fc.jpg",
+                "email_verified_at": "2025-12-17T18:25:02.000000Z",
+                "created_at": "2025-12-17T18:25:02.000000Z",
+                "updated_at": "2025-12-17T18:25:02.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "roles": [
+                    {
+                        "id": 6,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 1,
+                        "school_name": "École Primaire Sainte Thérèse"
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                "full_name": "Test",
+                "phone_or_email": "test@gmail.com",
+                "avatar_url": null,
+                "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                "created_at": "2025-12-17T18:23:56.000000Z",
+                "updated_at": "2025-12-17T19:06:02.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "roles": [
+                    {
+                        "id": 5,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 1,
+                        "school_name": "École Primaire Sainte Thérèse"
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                "full_name": "Héritier N'kele",
+                "phone_or_email": "nkeleheir@gmail.com",
+                "avatar_url": "http://localhost/storage/avatars/590c0612-fa3b-48ff-846e-b0e8fc1e0944.jpg",
+                "email_verified_at": "2025-12-17T17:21:09.000000Z",
+                "created_at": "2025-12-17T17:21:09.000000Z",
+                "updated_at": "2026-01-30T15:04:27.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "roles": [
+                    {
+                        "id": 4,
+                        "role_id": 1,
+                        "role_name": "superadmin",
+                        "school_id": null,
+                        "school_name": null
+                    }
+                ],
+                "is_parent": false
+            },
+            {
+                "id": "8d680718-bb94-4ed6-a8e9-b7a66168e7e6",
+                "full_name": "John Doe",
+                "phone_or_email": "jdoe@gmail1.com",
+                "avatar_url": "http://localhost/storage/avatars/918c343e-b520-4bbf-b87f-865db60b7d2e.jpg",
+                "email_verified_at": "2025-12-17T15:00:39.000000Z",
+                "created_at": "2025-12-17T15:00:39.000000Z",
+                "updated_at": "2026-01-30T16:07:34.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "roles": [
+                    {
+                        "id": 3,
+                        "role_id": 2,
+                        "role_name": "school_admin",
+                        "school_id": 4,
+                        "school_name": "Collège Boboto"
+                    }
+                ],
+                "is_parent": false
+            }
+        ],
+        "first_page_url": "http://localhost:8000/api/v1/admin/users?page=1",
+        "from": 1,
+        "last_page": 1,
+        "last_page_url": "http://localhost:8000/api/v1/admin/users?page=1",
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost:8000/api/v1/admin/users?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "next_page_url": null,
+        "path": "http://localhost:8000/api/v1/admin/users",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": 6,
+        "total": 6
+    },
+    "message": "Liste des utilisateurs récupérée avec succès"
+}
+
+
+DELETE : /api/v1/admin/users/ad01f75b-041a-4b09-8171-efe09fa4a15c
+
+
+POST : /api/v1/admin/users/8d680718-bb94-4ed6-a8e9-b7a66168e7e6/restore
+
+
+POST : /api/v1/admin/users/ad01f75b-041a-4b09-8171-efe09fa4a15c/reset-password
+
+
+Routes pour la gestion des avatars :
+
+DELETE : /api/v1/admin/users/{id}/avatar
+
+POST : /{id}/avatar-from-url
