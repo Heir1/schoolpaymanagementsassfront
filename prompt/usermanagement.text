@@ -177,3 +177,249 @@ Each role must see **only its authorized pages and actions**.
 * Clear error messages
 * Loading states during auth requests
 * No fintech-aggressive animations
+
+
+
+Users statistics GET /api/v1/admin/users/statistics
+
+
+{
+    "status": "success",
+    "data": {
+        "total_users": 6,
+        "active_users": 6,
+        "deleted_users": 0,
+        "users_by_role": {
+            "superadmin": {
+                "id": 1,
+                "name": "superadmin",
+                "description": "Administrateur système avec accès complet à toutes les fonctionnalités, toutes les écoles et tous les utilisateurs. Peut gérer la configuration globale.",
+                "total": 1,
+                "active": 1,
+                "deleted": 0
+            },
+            "school_admin": {
+                "id": 2,
+                "name": "school_admin",
+                "description": "Administrateur d'une école spécifique. Peut gérer les classes, les enseignants, les élèves, les frais et les paramètres de son école.",
+                "total": 4,
+                "active": 4,
+                "deleted": 0
+            },
+            "school_staff": {
+                "id": 3,
+                "name": "school_staff",
+                "description": "Personnel administratif d'une école (secrétaire, comptable). Peut gérer les inscriptions, les paiements et les communications, avec des permissions limitées.",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "teacher": {
+                "id": 4,
+                "name": "teacher",
+                "description": "Enseignant. Peut gérer les notes, les présences, le contenu des cours et communiquer avec les parents pour ses classes assignées.",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "accountant": {
+                "id": 5,
+                "name": "accountant",
+                "description": "Comptable d'école. Gère exclusivement les aspects financiers : frais, factures, rapports de paiement et rapports financiers.",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "parent": {
+                "id": 6,
+                "name": "parent",
+                "description": "Parent d'élève. Peut voir les informations de son enfant (notes, présences, emploi du temps), payer les frais et communiquer avec les enseignants.",
+                "total": 1,
+                "active": 1,
+                "deleted": 0
+            },
+            "student": {
+                "id": 7,
+                "name": "student",
+                "description": "Élève. Accède à son emploi du temps, ses notes, ses devoirs et peut télécharger des ressources éducatives.",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            }
+        },
+        "users_by_school": {
+            "École Primaire Sainte Thérèse": {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "total": 2,
+                "active": 2,
+                "deleted": 0
+            },
+            "École Primaire de la Gombe": {
+                "id": 2,
+                "name": "École Primaire de la Gombe",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "École Primaire Saint Michel": {
+                "id": 3,
+                "name": "École Primaire Saint Michel",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Collège Boboto": {
+                "id": 4,
+                "name": "Collège Boboto",
+                "total": 1,
+                "active": 1,
+                "deleted": 0
+            },
+            "Lycée Prince de Liège": {
+                "id": 5,
+                "name": "Lycée Prince de Liège",
+                "total": 1,
+                "active": 1,
+                "deleted": 0
+            },
+            "École Française de Kinshasa (EFK)": {
+                "id": 6,
+                "name": "École Française de Kinshasa (EFK)",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Lycée Français René Descartes": {
+                "id": 7,
+                "name": "Lycée Français René Descartes",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Institut de la Gombe": {
+                "id": 8,
+                "name": "Institut de la Gombe",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Complexe Scolaire Mgr. Shaumba": {
+                "id": 9,
+                "name": "Complexe Scolaire Mgr. Shaumba",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "École Secondaire Monseigneur Pelé": {
+                "id": 10,
+                "name": "École Secondaire Monseigneur Pelé",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Institut Motema Mpiko": {
+                "id": 11,
+                "name": "Institut Motema Mpiko",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Collège Saint Joseph": {
+                "id": 12,
+                "name": "Collège Saint Joseph",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            },
+            "Lycée Technique de Yaoundé caméroun": {
+                "id": 13,
+                "name": "Lycée Technique de Yaoundé caméroun",
+                "total": 0,
+                "active": 0,
+                "deleted": 0
+            }
+        },
+        "new_users_today": 0,
+        "new_users_this_week": 2,
+        "new_users_this_month": 2,
+        "users_without_avatar": 2,
+        "email_verified_users": 6,
+        "phone_users": 0,
+        "email_users": 6,
+        "creation_distribution_last_30_days": {
+            "2026-01-01": 0,
+            "2026-01-02": 0,
+            "2026-01-03": 0,
+            "2026-01-04": 0,
+            "2026-01-05": 0,
+            "2026-01-06": 0,
+            "2026-01-07": 0,
+            "2026-01-08": 0,
+            "2026-01-09": 0,
+            "2026-01-10": 0,
+            "2026-01-11": 0,
+            "2026-01-12": 0,
+            "2026-01-13": 0,
+            "2026-01-14": 0,
+            "2026-01-15": 0,
+            "2026-01-16": 0,
+            "2026-01-17": 0,
+            "2026-01-18": 0,
+            "2026-01-19": 0,
+            "2026-01-20": 0,
+            "2026-01-21": 0,
+            "2026-01-22": 0,
+            "2026-01-23": 0,
+            "2026-01-24": 0,
+            "2026-01-25": 0,
+            "2026-01-26": 0,
+            "2026-01-27": 0,
+            "2026-01-28": 0,
+            "2026-01-29": 0,
+            "2026-01-30": 2,
+            "2026-01-31": 0
+        },
+        "top_schools_by_user_count": [
+            {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "user_count": 2
+            },
+            {
+                "id": 5,
+                "name": "Lycée Prince de Liège",
+                "user_count": 1
+            },
+            {
+                "id": 4,
+                "name": "Collège Boboto",
+                "user_count": 1
+            },
+            {
+                "id": 10,
+                "name": "École Secondaire Monseigneur Pelé",
+                "user_count": 0
+            },
+            {
+                "id": 11,
+                "name": "Institut Motema Mpiko",
+                "user_count": 0
+            }
+        ],
+        "active_percentage": 100,
+        "verified_percentage": 100,
+        "with_avatar_percentage": 66.67,
+        "permissions": {
+            "is_super_admin": true,
+            "can_see_all_schools": true,
+            "school_id": null
+        },
+        "metrics": {
+            "avg_users_per_role": 0.86,
+            "avg_users_per_school": 0.31,
+            "growth_rate_this_week": 50
+        }
+    },
+    "message": "Statistiques des utilisateurs récupérées avec succès"
+}

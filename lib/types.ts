@@ -94,9 +94,48 @@ export interface AdminUsersListResponse {
   message: string;
 }
 
-// Admin API - Liste écoles
+// Statistiques utilisateurs - GET /api/v1/admin/users/statistics
+export interface AdminUsersStatisticsResponse {
+  status: string;
+  data: {
+    total_users: number;
+    active_users: number;
+    deleted_users: number;
+    new_users_today?: number;
+    new_users_this_week?: number;
+    new_users_this_month?: number;
+    email_verified_users?: number;
+    users_without_avatar?: number;
+    active_percentage?: number;
+    verified_percentage?: number;
+    with_avatar_percentage?: number;
+    users_by_role?: Record<
+      string,
+      { id: number; name: string; description?: string; total: number; active: number; deleted: number }
+    >;
+    users_by_school?: Record<
+      string,
+      { id: number; name: string; total: number; active: number; deleted: number }
+    >;
+    top_schools_by_user_count?: { id: number; name: string; user_count: number }[];
+    metrics?: {
+      avg_users_per_role?: number;
+      avg_users_per_school?: number;
+      growth_rate_this_week?: number;
+    };
+  };
+  message: string;
+}
+
+// Admin API - Écoles
+
 export interface AdminSchoolType {
   id: number;
+  name: string;
+}
+
+export interface AdminSchoolUserRef {
+  id: string;
   name: string;
 }
 
@@ -107,6 +146,9 @@ export interface AdminSchoolListItem {
   address: string | null;
   phone: string | null;
   school_years_count: number;
+  logo_url?: string | null;
+  created_by: AdminSchoolUserRef | null;
+  updated_by: AdminSchoolUserRef | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -115,6 +157,58 @@ export interface AdminSchoolListItem {
 export interface AdminSchoolsListResponse {
   status: string;
   data: PaginatedMeta & { data: AdminSchoolListItem[] };
+  message: string;
+}
+
+// Statistiques écoles
+export interface AdminSchoolsStatisticsResponse {
+  status: string;
+  data: {
+    total_schools: number;
+    active_schools: number;
+    deleted_schools: number;
+    schools_by_type: { type_name: string; count: number }[];
+    recent_schools_last_30_days: number;
+  };
+  message: string;
+}
+
+// Types d'écoles (pour formulaires)
+export interface AdminSchoolTypeItem {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+  deleted_at: string | null;
+}
+
+export interface AdminSchoolTypesResponse {
+  status: string;
+  data: AdminSchoolTypeItem[];
+  message: string;
+}
+
+// Détail d'une école
+export interface AdminSchoolDetail {
+  id: number;
+  name: string;
+  type: AdminSchoolType;
+  address: string | null;
+  phone: string | null;
+  logo_url?: string | null;
+  created_by: AdminSchoolUserRef | null;
+  updated_by: AdminSchoolUserRef | null;
+  school_years: unknown[];
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminSchoolDetailResponse {
+  status: string;
+  data: AdminSchoolDetail;
   message: string;
 }
 
@@ -154,6 +248,24 @@ export interface AdminUserProfileResponse {
   message: string;
 }
 
+// Profil utilisateur connecté - changement de mot de passe
+export interface ChangePasswordRequestBody {
+  current_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}
+
+export interface ChangePasswordResponse {
+  status: string;
+  message: string;
+  data?: {
+    user_id: string;
+    full_name: string;
+    password_changed_at: string;
+    logout_other_devices: boolean;
+  };
+}
+
 // Admin API - Reset password response
 export interface AdminResetPasswordResponse {
   status: string;
@@ -164,4 +276,212 @@ export interface AdminResetPasswordResponse {
     instructions: string;
     security_note: string;
   };
+}
+
+// Admin API - Années scolaires (school_admin / superadmin)
+export interface AdminSchoolYearSchoolRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminSchoolYearUserRef {
+  id: string;
+  name: string;
+}
+
+export interface AdminSchoolYearListItem {
+  id: number;
+  year_label: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  school: AdminSchoolYearSchoolRef;
+  created_by: AdminSchoolYearUserRef | null;
+  updated_by: AdminSchoolYearUserRef | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminSchoolYearsListResponse {
+  status: string;
+  data: PaginatedMeta & { data: AdminSchoolYearListItem[] };
+  message: string;
+}
+
+export interface CreateSchoolYearRequestBody {
+  school_id: number;
+  year_label: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+}
+
+export interface UpdateSchoolYearRequestBody {
+  year_label?: string;
+  start_date?: string;
+  end_date?: string;
+  is_active?: boolean;
+}
+
+export interface AdminSchoolYearDetailResponse {
+  status: string;
+  data: AdminSchoolYearListItem;
+  message: string;
+}
+
+// Admin API - Groupes d'étudiants (student-groups) - school_admin
+export interface AdminStudentGroupStatisticsResponse {
+  status: string;
+  data: {
+    total_groups: number;
+    active_groups: number;
+    deleted_groups: number;
+    groups_by_school: { school_name: string; count: number }[];
+    recent_groups_last_30_days: number;
+  };
+  message: string;
+}
+
+export interface AdminStudentGroupSchoolRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminStudentGroupListItem {
+  id: number;
+  name: string;
+  description: string | null;
+  school: AdminStudentGroupSchoolRef;
+  group_fees_count: number;
+  created_by: AdminSchoolYearUserRef | null;
+  updated_by: AdminSchoolYearUserRef | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminStudentGroupsListResponse {
+  status: string;
+  data: PaginatedMeta & { data: AdminStudentGroupListItem[] };
+  message: string;
+}
+
+export interface CreateStudentGroupRequestBody {
+  school_id: number;
+  name: string;
+  description?: string;
+}
+
+export interface UpdateStudentGroupRequestBody {
+  name?: string;
+  description?: string;
+}
+
+export interface AdminStudentGroupDetailResponse {
+  status: string;
+  data: AdminStudentGroupListItem;
+  message: string;
+}
+
+// Admin API - Classes (school_admin / superadmin)
+export interface AdminClassesStatisticsResponse {
+  status: string;
+  data: {
+    total_classes: number;
+    active_classes: number;
+    deleted_classes: number;
+    classes_by_school?: { school_name: string; count: number }[];
+    recent_classes_last_30_days?: number;
+  };
+  message: string;
+}
+
+export interface AdminClassSchoolRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminClassSchoolYearRef {
+  id: number;
+  year_label: string;
+  school_id?: number;
+}
+
+export interface AdminClassListItem {
+  id: number;
+  name: string;
+  level: string | null;
+  school: AdminClassSchoolRef;
+  school_year: AdminClassSchoolYearRef;
+  created_by: AdminSchoolYearUserRef | null;
+  updated_by: AdminSchoolYearUserRef | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminClassesListResponse {
+  status: string;
+  data: PaginatedMeta & { data: AdminClassListItem[] };
+  message: string;
+}
+
+// Options pour formulaires : super_admin (schools + school_years) ou school_admin (school + school_years + default_school_year)
+export interface AdminClassesOptionsSchoolItem {
+  id: number;
+  name: string;
+}
+
+export interface AdminClassesOptionsSchoolYearItem {
+  id: number;
+  year_label: string;
+  school_id?: number;
+}
+
+export interface AdminClassesOptionsSuperAdmin {
+  schools: AdminClassesOptionsSchoolItem[];
+  school_years: AdminClassesOptionsSchoolYearItem[];
+}
+
+export interface AdminClassesOptionsSchoolAdmin {
+  school: AdminClassesOptionsSchoolItem;
+  school_years: AdminClassesOptionsSchoolYearItem[];
+  default_school_year: AdminClassesOptionsSchoolYearItem;
+}
+
+export type AdminClassesOptionsData =
+  | AdminClassesOptionsSuperAdmin
+  | AdminClassesOptionsSchoolAdmin;
+
+export interface AdminClassesOptionsResponse {
+  status: string;
+  data: AdminClassesOptionsData;
+  message: string;
+}
+
+export function isClassesOptionsSchoolAdmin(
+  data: AdminClassesOptionsData
+): data is AdminClassesOptionsSchoolAdmin {
+  return "school" in data && !("schools" in data);
+}
+
+export interface CreateClassRequestBody {
+  school_id: number;
+  school_year_id: number;
+  name: string;
+  level: string;
+}
+
+export interface UpdateClassRequestBody {
+  school_id?: number;
+  school_year_id?: number;
+  name?: string;
+  level?: string;
+}
+
+export interface AdminClassDetailResponse {
+  status: string;
+  data: AdminClassListItem;
+  message: string;
 }

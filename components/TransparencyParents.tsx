@@ -67,7 +67,7 @@ export default function TransparencyParents() {
               Carte élève
             </div>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Suivi des paiements par élève, visible par l'école et le parent.
+              Suivi des paiements par élève, visible par l&apos;école et le parent.
             </p>
           </div>
         </motion.div>

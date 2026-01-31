@@ -287,6 +287,7 @@ export default function UserDetailPage() {
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-xl bg-schoolpay-accent/10 flex items-center justify-center text-schoolpay-accent shrink-0 overflow-hidden">
               {getAvatarUrl(profile.avatar_url) ? (
+                // eslint-disable-next-line @next/next/no-img-element -- avatar URL from API (dynamic)
                 <img
                   src={getAvatarUrl(profile.avatar_url)!}
                   alt=""

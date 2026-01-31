@@ -50,7 +50,7 @@ export default function SimpleDataViz() {
           transition={{ duration: 0.5 }}
         >
           <p className="section-label">Indicateurs</p>
-          <h2 className="section-title mb-4">Vue d'ensemble simple</h2>
+          <h2 className="section-title mb-4">Vue d&apos;ensemble simple</h2>
           <p className="section-desc">
             Pas de tableau de bord complexe : des chiffres lisibles et des
             indicateurs calmes.
@@ -91,7 +91,7 @@ export default function SimpleDataViz() {
           viewport={{ once: true }}
         >
           Graphiques simples, grands chiffres lisibles, couleurs apaisantes.
-          L'essentiel sans le superflu.
+          L&apos;essentiel sans le superflu.
         </motion.p>
       </div>
     </section>

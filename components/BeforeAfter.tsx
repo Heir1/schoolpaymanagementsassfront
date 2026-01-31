@@ -40,7 +40,7 @@ export default function BeforeAfter() {
           <p className="section-label">Comparaison</p>
           <h2 className="section-title mb-4">Avant / Après SchoolPay</h2>
           <p className="section-desc">
-            Passez d'une gestion papier à une gestion claire et fiable.
+            Passez d&apos;une gestion papier à une gestion claire et fiable.
           </p>
         </motion.div>
 

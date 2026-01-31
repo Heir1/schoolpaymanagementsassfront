@@ -5,9 +5,30 @@ import type {
   RegisterParentRequestBody,
   LogoutResponse,
   AdminUsersListResponse,
+  AdminUsersStatisticsResponse,
   AdminSchoolsListResponse,
+  AdminSchoolsStatisticsResponse,
+  AdminSchoolTypesResponse,
+  AdminSchoolDetailResponse,
   AdminUserProfileResponse,
   AdminResetPasswordResponse,
+  ChangePasswordRequestBody,
+  ChangePasswordResponse,
+  AdminSchoolYearsListResponse,
+  AdminSchoolYearDetailResponse,
+  CreateSchoolYearRequestBody,
+  UpdateSchoolYearRequestBody,
+  AdminStudentGroupStatisticsResponse,
+  AdminStudentGroupsListResponse,
+  AdminStudentGroupDetailResponse,
+  CreateStudentGroupRequestBody,
+  UpdateStudentGroupRequestBody,
+  AdminClassesStatisticsResponse,
+  AdminClassesListResponse,
+  AdminClassesOptionsResponse,
+  AdminClassDetailResponse,
+  CreateClassRequestBody,
+  UpdateClassRequestBody,
 } from "./types";
 
 const TOKEN_KEY = "schoolpay_token";
@@ -21,11 +42,12 @@ function getApiUrl(): string {
   return url.replace(/\/$/, "");
 }
 
-/** Réécrit l'URL d'avatar (ex. http://localhost/storage/...) avec l'origin de l'API (ex. http://127.0.0.1:8000) pour que les images s'affichent. */
+/** Réécrit l'URL d'avatar/logo (ex. http://localhost/storage/... ou /storage/...) avec l'origin de l'API pour que les images s'affichent. */
 export function getAvatarUrl(avatarUrl: string | null): string | null {
   if (!avatarUrl) return null;
   try {
     const base = getApiUrl();
+    if (avatarUrl.startsWith("/")) return base + avatarUrl;
     return avatarUrl.replace(/^https?:\/\/[^/]+/, base);
   } catch {
     return avatarUrl;
@@ -97,7 +119,13 @@ async function request<T>(
     if (typeof data?.message === "string") msg = data.message;
     else if (data?.errors && typeof data.errors === "object") {
       const err = data.errors as Record<string, unknown>;
-      const first = err.phone_or_email ?? err.email ?? err.password ?? Object.values(err)[0];
+      const first =
+      err.phone_or_email ??
+      err.email ??
+      err.password ??
+      err.current_password ??
+      err.new_password ??
+      Object.values(err)[0];
       msg = Array.isArray(first) ? (first[0] as string) : (first as string);
     }
     throw new Error(msg || res.statusText);
@@ -142,7 +170,15 @@ async function requestFormData<T>(
     else if (data?.errors && typeof data.errors === "object") {
       const err = data.errors as Record<string, unknown>;
       const first =
-        err.phone_or_email ?? err.email ?? err.full_name ?? Object.values(err)[0];
+        err.phone_or_email ??
+        err.email ??
+        err.full_name ??
+        err.avatar ??
+        err.name ??
+        err.type_id ??
+        err.logo ??
+        err.logo_url ??
+        Object.values(err)[0];
       msg = Array.isArray(first) ? (first[0] as string) : (first as string);
     }
     throw new Error(msg || res.statusText);
@@ -193,11 +229,385 @@ export const api = {
       );
     },
 
+    getUsersStatistics(
+      token: string | null
+    ): Promise<AdminUsersStatisticsResponse> {
+      return request<AdminUsersStatisticsResponse>(
+        "/api/v1/admin/users/statistics",
+        { method: "GET", token }
+      );
+    },
+
     getSchools(token: string | null, page = 1): Promise<AdminSchoolsListResponse> {
       return request<AdminSchoolsListResponse>(
         `/api/v1/admin/schools?page=${page}`,
         { method: "GET", token }
       );
+    },
+
+    getSchoolsStatistics(
+      token: string | null
+    ): Promise<AdminSchoolsStatisticsResponse> {
+      return request<AdminSchoolsStatisticsResponse>(
+        "/api/v1/admin/schools/statistics",
+        { method: "GET", token }
+      );
+    },
+
+    getSchoolTypes(token: string | null): Promise<AdminSchoolTypesResponse> {
+      return request<AdminSchoolTypesResponse>(
+        "/api/v1/admin/school-types",
+        { method: "GET", token }
+      );
+    },
+
+    getSchool(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminSchoolDetailResponse> {
+      return request<AdminSchoolDetailResponse>(
+        `/api/v1/admin/schools/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createSchool(
+      token: string | null,
+      formData: FormData
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return requestFormData("/api/v1/admin/schools", {
+        method: "POST",
+        body: formData,
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateSchool(
+      token: string | null,
+      id: string | number,
+      formData: FormData
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return requestFormData(`/api/v1/admin/schools/${id}`, {
+        method: "PUT",
+        body: formData,
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteSchool(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/schools/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreSchool(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/schools/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    /** Upload du logo d'une école - POST /api/v1/admin/schools/{id}/logo (FormData clé "logo") */
+    async uploadSchoolLogo(
+      token: string | null,
+      schoolId: string | number,
+      formData: FormData
+    ): Promise<{ status: string; message?: string; data?: { logo_url?: string } }> {
+      await fetchCsrfCookie();
+      return requestFormData(`/api/v1/admin/schools/${schoolId}/logo`, {
+        method: "POST",
+        body: formData,
+        token,
+        withCsrf: true,
+      });
+    },
+
+    /** Suppression du logo d'une école - DELETE /api/v1/admin/schools/{id}/logo */
+    async deleteSchoolLogo(
+      token: string | null,
+      schoolId: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/schools/${schoolId}/logo`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Années scolaires (school_admin / superadmin)
+    getSchoolYears(
+      token: string | null,
+      page = 1
+    ): Promise<AdminSchoolYearsListResponse> {
+      return request<AdminSchoolYearsListResponse>(
+        `/api/v1/admin/school-years?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getSchoolYear(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminSchoolYearDetailResponse> {
+      return request<AdminSchoolYearDetailResponse>(
+        `/api/v1/admin/school-years/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createSchoolYear(
+      token: string | null,
+      body: CreateSchoolYearRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/school-years`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateSchoolYear(
+      token: string | null,
+      id: string | number,
+      body: UpdateSchoolYearRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/school-years/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteSchoolYear(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/school-years/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreSchoolYear(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/school-years/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async toggleSchoolYearActive(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/school-years/${id}/toggle-active`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Groupes d'étudiants (student-groups) - school_admin
+    getStudentGroupsStatistics(
+      token: string | null
+    ): Promise<AdminStudentGroupStatisticsResponse> {
+      return request<AdminStudentGroupStatisticsResponse>(
+        "/api/v1/admin/student-groups/statistics",
+        { method: "GET", token }
+      );
+    },
+
+    getStudentGroups(
+      token: string | null,
+      page = 1
+    ): Promise<AdminStudentGroupsListResponse> {
+      return request<AdminStudentGroupsListResponse>(
+        `/api/v1/admin/student-groups?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getStudentGroup(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminStudentGroupDetailResponse> {
+      return request<AdminStudentGroupDetailResponse>(
+        `/api/v1/admin/student-groups/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createStudentGroup(
+      token: string | null,
+      body: CreateStudentGroupRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/student-groups", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateStudentGroup(
+      token: string | null,
+      id: string | number,
+      body: UpdateStudentGroupRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteStudentGroup(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreStudentGroup(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Classes (school_admin / superadmin)
+    getClassesStatistics(
+      token: string | null
+    ): Promise<AdminClassesStatisticsResponse> {
+      return request<AdminClassesStatisticsResponse>(
+        "/api/v1/admin/classes/statistics",
+        { method: "GET", token }
+      );
+    },
+
+    getClasses(
+      token: string | null,
+      page = 1
+    ): Promise<AdminClassesListResponse> {
+      return request<AdminClassesListResponse>(
+        `/api/v1/admin/classes?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getClassesOptions(
+      token: string | null
+    ): Promise<AdminClassesOptionsResponse> {
+      return request<AdminClassesOptionsResponse>(
+        "/api/v1/admin/classes/options",
+        { method: "GET", token }
+      );
+    },
+
+    getClass(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminClassDetailResponse> {
+      return request<AdminClassDetailResponse>(
+        `/api/v1/admin/classes/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createClass(
+      token: string | null,
+      body: CreateClassRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/classes", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateClass(
+      token: string | null,
+      id: string | number,
+      body: UpdateClassRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteClass(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreClass(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
     },
 
     async createUser(
@@ -264,6 +674,45 @@ export const api = {
       return request<AdminResetPasswordResponse>(`/api/v1/admin/users/${id}/reset-password`, {
         method: "POST",
         body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    /** Changement de mot de passe de l'utilisateur connecté */
+    async changePassword(
+      token: string | null,
+      body: ChangePasswordRequestBody
+    ): Promise<ChangePasswordResponse> {
+      await fetchCsrfCookie();
+      return request<ChangePasswordResponse>("/api/v1/admin/users/change-password", {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    /** Suppression de l'avatar de l'utilisateur (id = utilisateur connecté) */
+    async deleteAvatar(token: string | null, userId: string): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/users/${userId}/avatar`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    /** Upload d'un avatar (fichier image) - POST upload-avatar, FormData clé "avatar" */
+    async uploadAvatar(
+      token: string | null,
+      userId: string,
+      formData: FormData
+    ): Promise<{ status: string; message?: string; data?: { avatar_url?: string } }> {
+      await fetchCsrfCookie();
+      return requestFormData(`/api/v1/admin/users/${userId}/upload-avatar`, {
+        method: "POST",
+        body: formData,
         token,
         withCsrf: true,
       });

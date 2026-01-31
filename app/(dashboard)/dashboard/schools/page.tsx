@@ -2,20 +2,19 @@
 
 import { api, getToken, getAvatarUrl } from "@/lib/api";
 import type {
-  AdminUserListItem,
+  AdminSchoolListItem,
   PaginatedMeta,
-  AdminUsersStatisticsResponse,
+  AdminSchoolsStatisticsResponse,
 } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ChevronLeft,
   ChevronRight,
-  User,
   Plus,
   Eye,
   RotateCcw,
   Trash2,
-  Users,
+  Building2,
   TrendingUp,
   Calendar,
 } from "lucide-react";
@@ -25,12 +24,6 @@ import { useCallback, useEffect, useState } from "react";
 
 type FilterTab = "all" | "active" | "trash";
 
-const roleLabels: Record<string, string> = {
-  superadmin: "Super admin",
-  school_admin: "Admin école",
-  parent: "Parent",
-};
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -39,26 +32,26 @@ function formatDate(iso: string) {
   });
 }
 
-export default function UsersPage() {
+export default function SchoolsPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [list, setList] = useState<AdminUserListItem[]>([]);
+  const [list, setList] = useState<AdminSchoolListItem[]>([]);
   const [meta, setMeta] = useState<PaginatedMeta | null>(null);
+  const [stats, setStats] = useState<AdminSchoolsStatisticsResponse["data"] | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>("active");
-  const [restoringId, setRestoringId] = useState<string | null>(null);
-  const [stats, setStats] = useState<AdminUsersStatisticsResponse["data"] | null>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const [restoringId, setRestoringId] = useState<number | null>(null);
 
-  const fetchUsers = useCallback(() => {
+  const fetchSchools = useCallback(() => {
     const token = getToken();
     if (!token) return;
     setLoading(true);
     setError(null);
     api.admin
-      .getUsers(token, page)
+      .getSchools(token, page)
       .then((res) => {
         setList(res.data.data);
         setMeta({
@@ -85,7 +78,7 @@ export default function UsersPage() {
     if (!token) return;
     setStatsLoading(true);
     api.admin
-      .getUsersStatistics(token)
+      .getSchoolsStatistics(token)
       .then((res) => setStats(res.data))
       .catch(() => setStats(null))
       .finally(() => setStatsLoading(false));
@@ -101,25 +94,25 @@ export default function UsersPage() {
       router.replace("/login");
       return;
     }
-    fetchUsers();
+    fetchSchools();
     fetchStats();
-  }, [user?.role.name, router, fetchUsers, fetchStats]);
+  }, [user?.role.name, router, fetchSchools, fetchStats]);
 
-  const filteredList = list.filter((u) => {
-    const deleted = u.is_deleted === true || !!u.deleted_at;
+  const filteredList = list.filter((s) => {
+    const deleted = !!s.deleted_at;
     if (filter === "active") return !deleted;
     if (filter === "trash") return deleted;
     return true;
   });
 
-  function handleRestore(userId: string) {
+  function handleRestore(schoolId: number) {
     const token = getToken();
     if (!token) return;
-    setRestoringId(userId);
+    setRestoringId(schoolId);
     api.admin
-      .restoreUser(token, userId)
+      .restoreSchool(token, schoolId)
       .then(() => {
-        fetchUsers();
+        fetchSchools();
         fetchStats();
       })
       .catch((e) => setError(e instanceof Error ? e.message : "Erreur"))
@@ -134,18 +127,18 @@ export default function UsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight mb-2">
-            Utilisateurs
+            Écoles
           </h1>
           <p className="text-slate-600">
-            Liste des comptes. Création et édition des comptes school_admin.
+            Liste des établissements. Création et édition des écoles.
           </p>
         </div>
         <Link
-          href="/dashboard/users/new"
+          href="/dashboard/schools/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-schoolpay-accent text-white text-sm font-semibold hover:bg-schoolpay-accent-hover shadow-cta shrink-0"
         >
           <Plus className="w-4 h-4" />
-          Ajouter un utilisateur
+          Ajouter une école
         </Link>
       </div>
 
@@ -162,7 +155,10 @@ export default function UsersPage() {
       {statsLoading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-24 rounded-xl bg-slate-100 animate-pulse" />
+            <div
+              key={i}
+              className="h-24 rounded-xl bg-slate-100 animate-pulse"
+            />
           ))}
         </div>
       ) : stats && (
@@ -170,11 +166,11 @@ export default function UsersPage() {
           <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-schoolpay-accent/10 flex items-center justify-center text-schoolpay-accent">
-                <Users className="w-5 h-5" />
+                <Building2 className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.total_users}</p>
-                <p className="text-xs text-slate-500">Total utilisateurs</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.total_schools}</p>
+                <p className="text-xs text-slate-500">Total écoles</p>
               </div>
             </div>
           </div>
@@ -184,8 +180,8 @@ export default function UsersPage() {
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.active_users}</p>
-                <p className="text-xs text-slate-500">Actifs</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.active_schools}</p>
+                <p className="text-xs text-slate-500">Actives</p>
               </div>
             </div>
           </div>
@@ -195,8 +191,8 @@ export default function UsersPage() {
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.deleted_users}</p>
-                <p className="text-xs text-slate-500">Supprimés</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.deleted_schools}</p>
+                <p className="text-xs text-slate-500">Supprimées</p>
               </div>
             </div>
           </div>
@@ -207,9 +203,9 @@ export default function UsersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-900">
-                  {stats.new_users_this_week ?? 0}
+                  {stats.recent_schools_last_30_days}
                 </p>
-                <p className="text-xs text-slate-500">Nouveaux (7 j)</p>
+                <p className="text-xs text-slate-500">Créées (30 j)</p>
               </div>
             </div>
           </div>
@@ -226,7 +222,7 @@ export default function UsersPage() {
               : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
           }`}
         >
-          Actifs
+          Actives
         </button>
         <button
           type="button"
@@ -249,7 +245,7 @@ export default function UsersPage() {
               : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
           }`}
         >
-          Tous
+          Toutes
         </button>
       </div>
 
@@ -266,19 +262,16 @@ export default function UsersPage() {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/80">
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Utilisateur
+                      École
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Contact
+                      Type
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Rôle(s)
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">
+                      Téléphone
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Parent
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Inscrit le
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
+                      Créée le
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-24">
                       Actions
@@ -288,20 +281,24 @@ export default function UsersPage() {
                 <tbody>
                   {filteredList.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-12 text-center text-slate-500 text-sm">
+                      <td
+                        colSpan={5}
+                        className="px-4 py-12 text-center text-slate-500 text-sm"
+                      >
                         {filter === "active"
-                          ? "Aucun utilisateur actif."
+                          ? "Aucune école active."
                           : filter === "trash"
-                          ? "Aucun utilisateur dans la corbeille."
-                          : "Aucun utilisateur."}
+                            ? "Aucune école dans la corbeille."
+                            : "Aucune école."}
                       </td>
                     </tr>
                   ) : (
-                    filteredList.map((u) => {
-                      const isDeleted = u.is_deleted === true || !!u.deleted_at;
+                    filteredList.map((s) => {
+                      const isDeleted = !!s.deleted_at;
+                      const logoUrl = s.logo_url ? getAvatarUrl(s.logo_url) : null;
                       return (
                         <tr
-                          key={u.id}
+                          key={s.id}
                           className={`border-b border-slate-100 hover:bg-slate-50/50 ${
                             isDeleted ? "bg-slate-50/80 opacity-90" : ""
                           }`}
@@ -309,76 +306,57 @@ export default function UsersPage() {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <div className="w-9 h-9 rounded-lg bg-slate-200/80 flex items-center justify-center text-slate-600 shrink-0 overflow-hidden">
-                                {getAvatarUrl(u.avatar_url) ? (
-                                  // eslint-disable-next-line @next/next/no-img-element -- avatar URL from API (dynamic)
+                                {logoUrl ? (
+                                  // eslint-disable-next-line @next/next/no-img-element -- logo URL from API (dynamic)
                                   <img
-                                    src={getAvatarUrl(u.avatar_url)!}
+                                    src={logoUrl}
                                     alt=""
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
-                                  <User className="w-4 h-4" />
+                                  <div>
+                                    {logoUrl}
+                                    <Building2 className="w-4 h-4" />
+                                  </div>
                                 )}
                               </div>
-                              <div className="flex flex-col gap-0.5">
+                              <div className="flex flex-col gap-0.5 min-w-0">
                                 <span
                                   className={`font-medium ${
                                     isDeleted ? "text-slate-500" : "text-slate-900"
                                   }`}
                                 >
-                                  {u.full_name}
+                                  {s.name}
                                 </span>
-                                {isDeleted && (
+                                {isDeleted && s.deleted_at && (
                                   <span className="text-xs font-medium text-red-600">
-                                    Supprimé
-                                    {u.deleted_at && (
-                                      <> · {formatDate(u.deleted_at)}</>
-                                    )}
+                                    Supprimée · {formatDate(s.deleted_at)}
                                   </span>
                                 )}
                               </div>
                             </div>
                           </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              isDeleted ? "text-slate-400" : "text-slate-600"
-                            }`}
-                          >
-                            {u.phone_or_email}
-                          </td>
                           <td className="px-4 py-3">
-                            <div className="flex flex-wrap gap-1.5">
-                              {u.roles.map((r) => (
-                                <span
-                                  key={r.id}
-                                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                    isDeleted
-                                      ? "bg-slate-200 text-slate-500"
-                                      : "bg-schoolpay-accent/10 text-schoolpay-accent"
-                                  }`}
-                                >
-                                  {roleLabels[r.role_name] ?? r.role_name}
-                                  {r.school_name ? ` · ${r.school_name}` : ""}
-                                </span>
-                              ))}
-                            </div>
+                            <span
+                              className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
+                                isDeleted
+                                  ? "bg-slate-200 text-slate-500"
+                                  : "bg-schoolpay-accent/10 text-schoolpay-accent"
+                              }`}
+                            >
+                              {s.type.name}
+                            </span>
                           </td>
-                          <td className="px-4 py-3">
-                            {u.is_parent ? (
-                              <span className="text-xs font-medium text-slate-600">
-                                Oui
-                              </span>
-                            ) : (
-                              <span className="text-xs text-slate-400">—</span>
-                            )}
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">
+                            {s.phone || "—"}
                           </td>
-                          <td className="px-4 py-3 text-slate-500 text-sm">
-                            {formatDate(u.created_at)}
+                          <td className="px-4 py-3 text-slate-500 text-sm hidden sm:table-cell">
+                            {formatDate(s.created_at)}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <Link
-                                href={`/dashboard/users/${u.id}`}
+                                href={`/dashboard/schools/${s.id}`}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-schoolpay-accent hover:bg-schoolpay-accent/10"
                               >
                                 <Eye className="w-4 h-4" />
@@ -387,12 +365,12 @@ export default function UsersPage() {
                               {isDeleted && (
                                 <button
                                   type="button"
-                                  onClick={() => handleRestore(u.id)}
-                                  disabled={restoringId === u.id}
+                                  onClick={() => handleRestore(s.id)}
+                                  disabled={restoringId === s.id}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-schoolpay-green hover:bg-schoolpay-green/10 disabled:opacity-50"
                                 >
                                   <RotateCcw
-                                    className={`w-4 h-4 ${restoringId === u.id ? "animate-spin" : ""}`}
+                                    className={`w-4 h-4 ${restoringId === s.id ? "animate-spin" : ""}`}
                                   />
                                   Restaurer
                                 </button>
@@ -411,7 +389,7 @@ export default function UsersPage() {
               <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
                 <p className="text-sm text-slate-600">
                   Page {meta.current_page} sur {meta.last_page} ({meta.total}{" "}
-                  utilisateur{meta.total > 1 ? "s" : ""})
+                  école{meta.total > 1 ? "s" : ""})
                 </p>
                 <div className="flex items-center gap-2">
                   <button

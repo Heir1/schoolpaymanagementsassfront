@@ -1,0 +1,402 @@
+Maintenant on doit implementer la gestion des écoles
+
+GET /api/v1/admin/schools/statistics : la statistique des écoles
+
+{
+    "status": "success",
+    "data": {
+        "total_schools": 13,
+        "active_schools": 13,
+        "deleted_schools": 0,
+        "schools_by_type": [
+            {
+                "type_name": "Primaire",
+                "count": 3
+            },
+            {
+                "type_name": "Secondaire",
+                "count": 10
+            }
+        ],
+        "recent_schools_last_30_days": 0
+    },
+    "message": "Statistiques récupérées avec succès"
+}
+
+GET /api/v1/admin/schools : liste de toutes les écoles  
+
+{
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 13,
+                "name": "Lycée Technique de Yaoundé caméroun",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Bastos, Yaoundé",
+                "phone": "+237699887766",
+                "school_years_count": 0,
+                "created_by": {
+                    "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                    "name": "Héritier N'kele"
+                },
+                "updated_by": {
+                    "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                    "name": "Héritier N'kele"
+                },
+                "created_at": "2025-12-18T18:43:05.000000Z",
+                "updated_at": "2025-12-18T18:51:55.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Commune de Lingwala, Kinshasa",
+                "phone": "+243 81 700 0011",
+                "school_years_count": 2,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 2,
+                "name": "École Primaire de la Gombe",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Avenue de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0013",
+                "school_years_count": 3,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 3,
+                "name": "École Primaire Saint Michel",
+                "type": {
+                    "id": 1,
+                    "name": "Primaire"
+                },
+                "address": "Commune de Kasa-Vubu, Kinshasa",
+                "phone": "+243 81 700 0014",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 4,
+                "name": "Collège Boboto",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0002",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 5,
+                "name": "Lycée Prince de Liège",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue de la Justice, Gombe, Kinshasa",
+                "phone": "+243 81 700 0001",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 6,
+                "name": "École Française de Kinshasa (EFK)",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Quartier Binza, Kinshasa",
+                "phone": "+243 81 700 0003",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 7,
+                "name": "Lycée Français René Descartes",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de la Gombe, Kinshasa",
+                "phone": "+243 81 700 0004",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 8,
+                "name": "Institut de la Gombe",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue des Aviateurs, Gombe, Kinshasa",
+                "phone": "+243 81 700 0005",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 9,
+                "name": "Complexe Scolaire Mgr. Shaumba",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de Ngaliema, Kinshasa",
+                "phone": "+243 81 700 0007",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 10,
+                "name": "École Secondaire Monseigneur Pelé",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue de l'OUA, Kinshasa",
+                "phone": "+243 81 700 0008",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 11,
+                "name": "Institut Motema Mpiko",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Commune de Kalamu, Kinshasa",
+                "phone": "+243 81 700 0009",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            },
+            {
+                "id": 12,
+                "name": "Collège Saint Joseph",
+                "type": {
+                    "id": 2,
+                    "name": "Secondaire"
+                },
+                "address": "Avenue Batetela, Kinshasa",
+                "phone": "+243 81 700 0012",
+                "school_years_count": 0,
+                "created_by": null,
+                "updated_by": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "deleted_at": null
+            }
+        ],
+        "first_page_url": "http://localhost:8000/api/v1/admin/schools?page=1",
+        "from": 1,
+        "last_page": 1,
+        "last_page_url": "http://localhost:8000/api/v1/admin/schools?page=1",
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost:8000/api/v1/admin/schools?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "next_page_url": null,
+        "path": "http://localhost:8000/api/v1/admin/schools",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": 13,
+        "total": 13
+    },
+    "message": "Liste des écoles récupérée avec succès"
+}
+
+GET /api/v1/admin/schools/13 school detail : 
+
+{
+    "status": "success",
+    "data": {
+        "id": 13,
+        "name": "Lycée Technique de Yaoundé caméroun",
+        "type": {
+            "id": 2,
+            "name": "Secondaire"
+        },
+        "address": "Bastos, Yaoundé",
+        "phone": "+237699887766",
+        "created_by": {
+            "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+            "name": "Héritier N'kele"
+        },
+        "updated_by": {
+            "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+            "name": "Héritier N'kele"
+        },
+        "school_years": [],
+        "created_at": "2025-12-18T18:43:05.000000Z",
+        "updated_at": "2025-12-18T18:51:55.000000Z",
+        "deleted_at": null
+    },
+    "message": "École récupérée avec succès"
+}
+
+POST /api/v1/admin/schools :
+
+$validationRules = array_merge([
+    'name' => 'required|string|max:255|unique:schools,name',
+    'type_id' => 'required|integer|exists:school_types,id',
+    'address' => 'nullable|string|max:500',
+    'phone' => [
+        'nullable',
+        'string',
+        'max:20',
+        'regex:/^\+?[1-9]\d{1,14}$/',
+    ],
+], $this->getLogoValidationRules());
+
+$validator = Validator::make($request->all(), $validationRules, [
+    'name.required' => 'Le nom de l\'école est requis.',
+    'name.unique' => 'Ce nom d\'école est déjà utilisé.',
+    'type_id.required' => 'Le type d\'école est requis.',
+    'type_id.exists' => 'Le type d\'école sélectionné n\'existe pas.',
+    'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
+    'logo.image' => 'Le fichier doit être une image.',
+    'logo.max' => 'L\'image ne doit pas dépasser 2MB.',
+]);
+
+tout en selectionnant type_id dans le endpoint : "/api/v1/admin/school-types" : "{
+    "status": "success",
+    "data": [
+        {
+            "id": 1,
+            "name": "Primaire",
+            "created_at": "2025-12-17T14:33:51.000000Z",
+            "updated_at": "2025-12-17T14:33:51.000000Z",
+            "created_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "updated_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "deleted_at": null
+        },
+        {
+            "id": 2,
+            "name": "Secondaire",
+            "created_at": "2025-12-17T14:33:51.000000Z",
+            "updated_at": "2025-12-17T14:33:51.000000Z",
+            "created_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "updated_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "deleted_at": null
+        }
+    ],
+    "message": "Types d'écoles récupérés avec succès"
+}"
+
+PUT : /api/v1/admin/schools/13
+
+
+GET School detail : /api/v1/admin/schools/13 :
+
+{
+    "status": "success",
+    "data": {
+        "id": 13,
+        "name": "Lycée Technique de Yaoundé caméroun",
+        "type": {
+            "id": 2,
+            "name": "Secondaire"
+        },
+        "address": "Bastos, Yaoundé",
+        "phone": "+237699887766",
+        "logo_url": null,
+        "created_by": {
+            "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+            "name": "Héritier N'kele"
+        },
+        "updated_by": {
+            "id": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+            "name": "Héritier N'kele"
+        },
+        "school_years": [],
+        "created_at": "2025-12-18T18:43:05.000000Z",
+        "updated_at": "2025-12-18T18:51:55.000000Z",
+        "deleted_at": null
+    },
+    "message": "École récupérée avec succès"
+}
+
+
+
+DELETE /api/v1/admin/schools/13
+
+
+POST   /api/v1/admin/schools/13/restore
+
+
+POST /api/v1/admin/schools/{id}/logo
+DELETE /api/v1/admin/schools/{id}/logo'

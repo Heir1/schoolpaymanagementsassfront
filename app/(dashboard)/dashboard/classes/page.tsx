@@ -1,21 +1,21 @@
 "use client";
 
-import { api, getToken, getAvatarUrl } from "@/lib/api";
+import { api, getToken } from "@/lib/api";
 import type {
-  AdminUserListItem,
+  AdminClassListItem,
   PaginatedMeta,
-  AdminUsersStatisticsResponse,
+  AdminClassesStatisticsResponse,
 } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ChevronLeft,
   ChevronRight,
-  User,
   Plus,
   Eye,
+  Pencil,
   RotateCcw,
   Trash2,
-  Users,
+  GraduationCap,
   TrendingUp,
   Calendar,
 } from "lucide-react";
@@ -25,12 +25,6 @@ import { useCallback, useEffect, useState } from "react";
 
 type FilterTab = "all" | "active" | "trash";
 
-const roleLabels: Record<string, string> = {
-  superadmin: "Super admin",
-  school_admin: "Admin école",
-  parent: "Parent",
-};
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -39,26 +33,27 @@ function formatDate(iso: string) {
   });
 }
 
-export default function UsersPage() {
+export default function ClassesPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [list, setList] = useState<AdminUserListItem[]>([]);
+  const [list, setList] = useState<AdminClassListItem[]>([]);
   const [meta, setMeta] = useState<PaginatedMeta | null>(null);
+  const [stats, setStats] = useState<AdminClassesStatisticsResponse["data"] | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>("active");
-  const [restoringId, setRestoringId] = useState<string | null>(null);
-  const [stats, setStats] = useState<AdminUsersStatisticsResponse["data"] | null>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const [restoringId, setRestoringId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const fetchUsers = useCallback(() => {
+  const fetchClasses = useCallback(() => {
     const token = getToken();
     if (!token) return;
     setLoading(true);
     setError(null);
     api.admin
-      .getUsers(token, page)
+      .getClasses(token, page)
       .then((res) => {
         setList(res.data.data);
         setMeta({
@@ -85,14 +80,14 @@ export default function UsersPage() {
     if (!token) return;
     setStatsLoading(true);
     api.admin
-      .getUsersStatistics(token)
+      .getClassesStatistics(token)
       .then((res) => setStats(res.data))
       .catch(() => setStats(null))
       .finally(() => setStatsLoading(false));
   }, []);
 
   useEffect(() => {
-    if (user?.role.name !== "superadmin") {
+    if (user?.role.name !== "school_admin" && user?.role.name !== "superadmin") {
       router.replace("/dashboard");
       return;
     }
@@ -101,51 +96,66 @@ export default function UsersPage() {
       router.replace("/login");
       return;
     }
-    fetchUsers();
+    fetchClasses();
     fetchStats();
-  }, [user?.role.name, router, fetchUsers, fetchStats]);
+  }, [user?.role.name, router, fetchClasses, fetchStats]);
 
-  const filteredList = list.filter((u) => {
-    const deleted = u.is_deleted === true || !!u.deleted_at;
+  const filteredList = list.filter((item) => {
+    const deleted = !!item.deleted_at;
     if (filter === "active") return !deleted;
     if (filter === "trash") return deleted;
     return true;
   });
 
-  function handleRestore(userId: string) {
+  function handleRestore(id: number) {
     const token = getToken();
     if (!token) return;
-    setRestoringId(userId);
+    setRestoringId(id);
     api.admin
-      .restoreUser(token, userId)
+      .restoreClass(token, id)
       .then(() => {
-        fetchUsers();
+        fetchClasses();
         fetchStats();
       })
       .catch((e) => setError(e instanceof Error ? e.message : "Erreur"))
       .finally(() => setRestoringId(null));
   }
 
+  function handleDelete(id: number) {
+    if (!confirm("Supprimer cette classe ?")) return;
+    const token = getToken();
+    if (!token) return;
+    setDeletingId(id);
+    api.admin
+      .deleteClass(token, id)
+      .then(() => {
+        fetchClasses();
+        fetchStats();
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Erreur"))
+      .finally(() => setDeletingId(null));
+  }
+
   if (!user) return null;
-  if (user.role.name !== "superadmin") return null;
+  if (user.role.name !== "school_admin" && user.role.name !== "superadmin") return null;
 
   return (
     <div className="p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight mb-2">
-            Utilisateurs
+            Classes
           </h1>
           <p className="text-slate-600">
-            Liste des comptes. Création et édition des comptes school_admin.
+            Gestion des classes par école et année scolaire.
           </p>
         </div>
         <Link
-          href="/dashboard/users/new"
+          href="/dashboard/classes/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-schoolpay-accent text-white text-sm font-semibold hover:bg-schoolpay-accent-hover shadow-cta shrink-0"
         >
           <Plus className="w-4 h-4" />
-          Ajouter un utilisateur
+          Ajouter une classe
         </Link>
       </div>
 
@@ -170,11 +180,11 @@ export default function UsersPage() {
           <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-schoolpay-accent/10 flex items-center justify-center text-schoolpay-accent">
-                <Users className="w-5 h-5" />
+                <GraduationCap className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.total_users}</p>
-                <p className="text-xs text-slate-500">Total utilisateurs</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.total_classes}</p>
+                <p className="text-xs text-slate-500">Total classes</p>
               </div>
             </div>
           </div>
@@ -184,8 +194,8 @@ export default function UsersPage() {
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.active_users}</p>
-                <p className="text-xs text-slate-500">Actifs</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.active_classes}</p>
+                <p className="text-xs text-slate-500">Actives</p>
               </div>
             </div>
           </div>
@@ -195,8 +205,8 @@ export default function UsersPage() {
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{stats.deleted_users}</p>
-                <p className="text-xs text-slate-500">Supprimés</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.deleted_classes}</p>
+                <p className="text-xs text-slate-500">Supprimées</p>
               </div>
             </div>
           </div>
@@ -207,9 +217,9 @@ export default function UsersPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-900">
-                  {stats.new_users_this_week ?? 0}
+                  {stats.recent_classes_last_30_days ?? 0}
                 </p>
-                <p className="text-xs text-slate-500">Nouveaux (7 j)</p>
+                <p className="text-xs text-slate-500">Créées (30 j)</p>
               </div>
             </div>
           </div>
@@ -226,7 +236,7 @@ export default function UsersPage() {
               : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
           }`}
         >
-          Actifs
+          Actives
         </button>
         <button
           type="button"
@@ -249,7 +259,7 @@ export default function UsersPage() {
               : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
           }`}
         >
-          Tous
+          Toutes
         </button>
       </div>
 
@@ -266,21 +276,21 @@ export default function UsersPage() {
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/80">
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Utilisateur
+                      Classe
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Contact
+                      Niveau
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Rôle(s)
+                      École
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Parent
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
+                      Année scolaire
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      Inscrit le
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
+                      Créée le
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-24">
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-40">
                       Actions
                     </th>
                   </tr>
@@ -288,111 +298,103 @@ export default function UsersPage() {
                 <tbody>
                   {filteredList.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-12 text-center text-slate-500 text-sm">
+                      <td
+                        colSpan={6}
+                        className="px-4 py-12 text-center text-slate-500 text-sm"
+                      >
                         {filter === "active"
-                          ? "Aucun utilisateur actif."
+                          ? "Aucune classe active."
                           : filter === "trash"
-                          ? "Aucun utilisateur dans la corbeille."
-                          : "Aucun utilisateur."}
+                            ? "Aucune classe dans la corbeille."
+                            : "Aucune classe."}
                       </td>
                     </tr>
                   ) : (
-                    filteredList.map((u) => {
-                      const isDeleted = u.is_deleted === true || !!u.deleted_at;
+                    filteredList.map((item) => {
+                      const isDeleted = !!item.deleted_at;
                       return (
                         <tr
-                          key={u.id}
+                          key={item.id}
                           className={`border-b border-slate-100 hover:bg-slate-50/50 ${
                             isDeleted ? "bg-slate-50/80 opacity-90" : ""
                           }`}
                         >
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-slate-200/80 flex items-center justify-center text-slate-600 shrink-0 overflow-hidden">
-                                {getAvatarUrl(u.avatar_url) ? (
-                                  // eslint-disable-next-line @next/next/no-img-element -- avatar URL from API (dynamic)
-                                  <img
-                                    src={getAvatarUrl(u.avatar_url)!}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <User className="w-4 h-4" />
-                                )}
-                              </div>
-                              <div className="flex flex-col gap-0.5">
-                                <span
-                                  className={`font-medium ${
-                                    isDeleted ? "text-slate-500" : "text-slate-900"
-                                  }`}
-                                >
-                                  {u.full_name}
-                                </span>
-                                {isDeleted && (
-                                  <span className="text-xs font-medium text-red-600">
-                                    Supprimé
-                                    {u.deleted_at && (
-                                      <> · {formatDate(u.deleted_at)}</>
-                                    )}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              isDeleted ? "text-slate-400" : "text-slate-600"
-                            }`}
-                          >
-                            {u.phone_or_email}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex flex-wrap gap-1.5">
-                              {u.roles.map((r) => (
-                                <span
-                                  key={r.id}
-                                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                    isDeleted
-                                      ? "bg-slate-200 text-slate-500"
-                                      : "bg-schoolpay-accent/10 text-schoolpay-accent"
-                                  }`}
-                                >
-                                  {roleLabels[r.role_name] ?? r.role_name}
-                                  {r.school_name ? ` · ${r.school_name}` : ""}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            {u.is_parent ? (
-                              <span className="text-xs font-medium text-slate-600">
-                                Oui
+                            <div className="flex flex-col gap-0.5">
+                              <span
+                                className={`font-medium ${
+                                  isDeleted ? "text-slate-500" : "text-slate-900"
+                                }`}
+                              >
+                                {item.name}
                               </span>
-                            ) : (
-                              <span className="text-xs text-slate-400">—</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-slate-500 text-sm">
-                            {formatDate(u.created_at)}
+                              {isDeleted && item.deleted_at && (
+                                <span className="text-xs font-medium text-red-600">
+                                  Supprimée · {formatDate(item.deleted_at)}
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
+                            <span
+                              className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
+                                isDeleted
+                                  ? "bg-slate-200 text-slate-500"
+                                  : "bg-schoolpay-accent/10 text-schoolpay-accent"
+                              }`}
+                            >
+                              {item.level || "—"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-600">
+                            {item.school.name}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden sm:table-cell">
+                            {item.school_year.year_label}
+                          </td>
+                          <td className="px-4 py-3 text-slate-500 text-sm hidden sm:table-cell">
+                            {formatDate(item.created_at)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <Link
-                                href={`/dashboard/users/${u.id}`}
+                                href={`/dashboard/classes/${item.id}`}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-schoolpay-accent hover:bg-schoolpay-accent/10"
                               >
                                 <Eye className="w-4 h-4" />
                                 Voir
                               </Link>
+                              {!isDeleted && (
+                                <>
+                                  <Link
+                                    href={`/dashboard/classes/${item.id}/edit`}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                    Modifier
+                                  </Link>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDelete(item.id)}
+                                    disabled={deletingId === item.id}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                  >
+                                    <Trash2
+                                      className={`w-4 h-4 ${deletingId === item.id ? "animate-spin" : ""}`}
+                                    />
+                                    Supprimer
+                                  </button>
+                                </>
+                              )}
                               {isDeleted && (
                                 <button
                                   type="button"
-                                  onClick={() => handleRestore(u.id)}
-                                  disabled={restoringId === u.id}
+                                  onClick={() => handleRestore(item.id)}
+                                  disabled={restoringId === item.id}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-schoolpay-green hover:bg-schoolpay-green/10 disabled:opacity-50"
                                 >
                                   <RotateCcw
-                                    className={`w-4 h-4 ${restoringId === u.id ? "animate-spin" : ""}`}
+                                    className={`w-4 h-4 ${restoringId === item.id ? "animate-spin" : ""}`}
                                   />
                                   Restaurer
                                 </button>
@@ -407,11 +409,11 @@ export default function UsersPage() {
               </table>
             </div>
 
-            {meta && (
+            {meta && meta.last_page > 0 && (
               <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">
                 <p className="text-sm text-slate-600">
                   Page {meta.current_page} sur {meta.last_page} ({meta.total}{" "}
-                  utilisateur{meta.total > 1 ? "s" : ""})
+                  classe{meta.total > 1 ? "s" : ""})
                 </p>
                 <div className="flex items-center gap-2">
                   <button
