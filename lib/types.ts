@@ -642,3 +642,184 @@ export interface UpdateFeeRequestBody {
 export interface AssociateFeeClassesRequestBody {
   class_ids: number[];
 }
+
+// Admin API - Provinces / Villes (pour formulaires étudiants)
+export interface AdminProvinceItem {
+  id: number;
+  name: string;
+}
+
+export interface AdminProvincesResponse {
+  status: string;
+  data: AdminProvinceItem[] | { provinces: AdminProvinceItem[] };
+  message?: string;
+}
+
+export interface AdminCityItem {
+  id: number;
+  province_id: number;
+  name: string;
+  type?: string;
+}
+
+export interface AdminProvinceCitiesResponse {
+  status: string;
+  data: AdminCityItem[] | { cities: AdminCityItem[] };
+  message?: string;
+}
+
+// Admin API - Étudiants (students)
+export interface AdminStudentCodeResponse {
+  status: string;
+  data: { code: string };
+  message?: string;
+}
+
+export interface AdminStudentSchoolRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminStudentClassRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminStudentGroupRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminStudentListItem {
+  id: number;
+  student_code: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string | null;
+  gender: string;
+  birth_date: string;
+  school: AdminStudentSchoolRef;
+  class: AdminStudentClassRef;
+  province: string;
+  city: string;
+  street: string | null;
+  student_group: AdminStudentGroupRef | null;
+  is_approved: boolean;
+  created_by: string;
+  updated_by: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+export interface AdminStudentsListResponse {
+  status: string;
+  data: {
+    students: AdminStudentListItem[];
+    pagination: FeeTypePagination;
+  };
+  message: string;
+}
+
+export interface CreateStudentRequestBody {
+  class_id: number;
+  student_code: string;
+  first_name: string;
+  last_name: string;
+  middle_name?: string | null;
+  gender: string;
+  birth_date: string;
+  province_id: number;
+  city_id: number;
+  street?: string | null;
+  student_group_id?: number | null;
+  is_approved: boolean;
+}
+
+export type UpdateStudentRequestBody = CreateStudentRequestBody;
+
+// Détail étudiant
+export interface AdminStudentDetailUserRef {
+  id: string;
+  full_name: string;
+  phone_or_email: string;
+  avatar_path: string | null;
+  deleted_at: string | null;
+}
+
+export interface AdminStudentDetailProvince {
+  id: number;
+  name: string;
+}
+
+export interface AdminStudentDetailCity {
+  id: number;
+  province_id: number;
+  name: string;
+  type?: string;
+}
+
+export interface AdminStudentDetailFee {
+  id: number;
+  student_id: number;
+  fee_type_id: number;
+  amount: string;
+  due_date: string;
+  deleted_at: string | null;
+}
+
+export interface AdminStudentMissingDocument {
+  id: number;
+  class_id: number;
+  document_id: number;
+  is_mandatory: boolean;
+}
+
+export interface AdminStudentDetailData {
+  id: number;
+  school_id: number;
+  class_id: number;
+  student_code: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string | null;
+  gender: string;
+  birth_date: string;
+  province_id: number;
+  city_id: number;
+  street: string | null;
+  student_group_id: number | null;
+  is_approved: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  created_by: AdminStudentDetailUserRef | null;
+  updated_by: AdminStudentDetailUserRef | null;
+  school: AdminStudentSchoolRef & { address?: string; phone?: string; logo_path?: string | null };
+  class: AdminClassListItem;
+  province: AdminStudentDetailProvince;
+  city: AdminStudentDetailCity;
+  student_group: AdminStudentGroupRef | null;
+  documents: unknown[];
+  student_fees: AdminStudentDetailFee[];
+  inscription_payments?: unknown[];
+}
+
+export interface AdminStudentDetailResponse {
+  status: string;
+  data: {
+    student: AdminStudentDetailData;
+    missing_required_documents: AdminStudentMissingDocument[];
+    has_missing_documents: boolean;
+  };
+  message: string;
+}
+
+export interface AdminClassStudentsResponse {
+  status: string;
+  data: {
+    students: AdminStudentListItem[];
+    pagination?: FeeTypePagination;
+  };
+  message: string;
+}

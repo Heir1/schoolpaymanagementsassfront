@@ -1,0 +1,213 @@
+GET /api/v1/admin/students : 
+
+{
+    "status": "success",
+    "message": "Liste des étudiants récupérée avec succès",
+    "data": {
+        "students": [
+            {
+                "id": 1,
+                "student_code": "ECOLE-202412-ABCD",
+                "first_name": "John",
+                "last_name": "Doe",
+                "middle_name": "Michael",
+                "gender": "male",
+                "birth_date": "2010-05-15",
+                "school": {
+                    "id": 1,
+                    "name": "École Primaire Sainte Thérèse"
+                },
+                "class": {
+                    "id": 1,
+                    "name": "Premier primaire 2024-2025"
+                },
+                "province": "Kinshasa",
+                "city": "Gombe",
+                "street": "123 Rue Principale",
+                "student_group": null,
+                "is_approved": true,
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2025-12-22T18:29:37+00:00",
+                "updated_at": "2025-12-22T18:44:33+00:00"
+            }
+        ],
+        "pagination": {
+            "total": 2,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1,
+            "from": 1,
+            "to": 2
+        }
+    }
+}
+
+
+POST /api/v1/admin/students et PUT /api/v1/admin/students/1
+
+{
+  "class_id": 1,
+  "student_code": "ECOLE-202412-ABD", doit etre prérempli automatique grace à GET /api/v1/admin/students/generate-code et le champ doit etre disabled
+  "first_name": "Ouria",
+  "last_name": "Umba",
+  "middle_name": "N'kele",
+  "gender": "male",
+  "birth_date": "2010-05-15",
+  "province_id": 1, GET /api/v1/admin/provinces, une fois province selectionnée on fai une requette GET /api/v1/admin/provinces/1/cities pout load le champ "city_id"
+  "city_id": 1, // par defaut le champ est desactivé. une fois que la province est sélectionnée il load toutes cities
+  "street": "123 Rue Principale",
+  "student_group_id": 1,   ( provient de GET /api/v1/admin/student-groups ) // NULLABLE
+  "is_approved": true
+}
+
+
+DELETE /api/v1/admin/students/1
+
+POST /api/v1/admin/students/1/restore
+
+POST /api/v1/admin/students/1/disapprove
+
+POST /api/v1/admin/students/1/approve
+
+GET /api/v1/admin/classes/1/students/
+
+
+/api/v1/admin/students/1 
+
+{
+    "status": "success",
+    "message": "Étudiant récupéré avec succès",
+    "data": {
+        "student": {
+            "id": 1,
+            "school_id": 1,
+            "class_id": 1,
+            "student_code": "ECOLE-202412-ABCD",
+            "first_name": "John",
+            "last_name": "Doe",
+            "middle_name": "Michael",
+            "gender": "male",
+            "birth_date": "2010-05-15T00:00:00.000000Z",
+            "province_id": 1,
+            "city_id": 1,
+            "street": "123 Rue Principale",
+            "student_group_id": null,
+            "is_approved": true,
+            "created_at": "2025-12-22T18:29:37.000000Z",
+            "updated_at": "2025-12-22T18:44:33.000000Z",
+            "created_by": {
+                "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                "full_name": "Test",
+                "phone_or_email": "test@gmail.com",
+                "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                "two_factor_confirmed_at": null,
+                "initial_password_set": true,
+                "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                "created_at": "2025-12-17T18:23:56.000000Z",
+                "updated_at": "2026-01-31T13:45:13.000000Z",
+                "deleted_at": null
+            },
+            "updated_by": {
+                "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                "full_name": "Test",
+                "phone_or_email": "test@gmail.com",
+                "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                "two_factor_confirmed_at": null,
+                "initial_password_set": true,
+                "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                "created_at": "2025-12-17T18:23:56.000000Z",
+                "updated_at": "2026-01-31T13:45:13.000000Z",
+                "deleted_at": null
+            },
+            "deleted_at": null,
+            "school": {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "type_id": 1,
+                "address": "Commune de Lingwala, Kinshasa",
+                "phone": "+243 81 700 0011",
+                "logo_path": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "created_by": "04263b35-e163-4403-a4d8-833673a3898f",
+                "updated_by": "04263b35-e163-4403-a4d8-833673a3898f",
+                "deleted_at": null
+            },
+            "class": {
+                "id": 1,
+                "school_id": 1,
+                "school_year_id": 1,
+                "name": "Premier primaire 2024-2025",
+                "level": "Primaire",
+                "created_at": "2025-12-19T14:34:51.000000Z",
+                "updated_at": "2025-12-19T14:37:52.000000Z",
+                "created_by": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                "updated_by": "2de87bc1-e3e6-4bba-883d-c05330a57149",
+                "deleted_at": null
+            },
+            "province": {
+                "id": 1,
+                "name": "Kinshasa",
+                "created_at": "2025-12-19T17:44:31.000000Z",
+                "updated_at": "2025-12-19T17:44:31.000000Z",
+                "created_by": "1",
+                "updated_by": "1",
+                "deleted_at": null
+            },
+            "city": {
+                "id": 1,
+                "province_id": 1,
+                "name": "Gombe",
+                "type": "territory",
+                "created_at": "2025-12-19T17:45:08.000000Z",
+                "updated_at": "2025-12-19T17:45:08.000000Z",
+                "created_by": "1",
+                "updated_by": "1",
+                "deleted_at": null
+            },
+            "student_group": null,
+            "documents": [],
+            "student_fees": [
+                {
+                    "id": 1,
+                    "student_id": 1,
+                    "fee_type_id": 1,
+                    "amount": "800000.00",
+                    "due_date": "2024-12-31T00:00:00.000000Z",
+                    "created_at": "2026-01-12T16:09:43.000000Z",
+                    "updated_at": "2026-01-12T16:30:43.000000Z",
+                    "created_by": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "updated_by": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "deleted_at": null
+                }
+            ],
+            "inscription_payments": []
+        },
+        "missing_required_documents": [
+            {
+                "id": 8,
+                "class_id": 1,
+                "document_id": 1,
+                "is_mandatory": true,
+                "created_at": "2025-12-19T16:53:53.000000Z",
+                "updated_at": "2025-12-19T17:28:26.000000Z",
+                "deleted_at": null,
+                "created_by": null,
+                "updated_by": null
+            },
+            {
+                "id": 9,
+                "class_id": 1,
+                "document_id": 2,
+                "is_mandatory": true,
+                "created_at": "2025-12-19T16:53:53.000000Z",
+                "updated_at": "2025-12-19T17:27:58.000000Z",
+                "deleted_at": null,
+                "created_by": null,
+                "updated_by": null
+            }
+        ],
+        "has_missing_documents": true
+    }
+}

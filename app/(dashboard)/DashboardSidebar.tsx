@@ -10,6 +10,7 @@ import {
   UsersRound,
   Banknote,
   Receipt,
+  BookUser,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,6 +36,7 @@ export default function DashboardSidebar() {
           { href: "/dashboard/users", label: "Utilisateurs", icon: Users },
           { href: "/dashboard/schools", label: "Écoles", icon: Building2 },
           { href: "/dashboard/classes", label: "Classes", icon: GraduationCap },
+          { href: "/dashboard/students", label: "Étudiants", icon: BookUser },
           { href: "/dashboard/fee-types", label: "Types de frais", icon: Banknote },
           { href: "/dashboard/fees", label: "Frais", icon: Receipt },
         ]
@@ -44,6 +46,7 @@ export default function DashboardSidebar() {
           { href: "/dashboard/school-years", label: "Années scolaires", icon: CalendarDays },
           { href: "/dashboard/student-groups", label: "Groupes d'élèves", icon: UsersRound },
           { href: "/dashboard/classes", label: "Classes", icon: GraduationCap },
+          { href: "/dashboard/students", label: "Étudiants", icon: BookUser },
           { href: "/dashboard/fee-types", label: "Types de frais", icon: Banknote },
           { href: "/dashboard/fees", label: "Frais", icon: Receipt },
         ]

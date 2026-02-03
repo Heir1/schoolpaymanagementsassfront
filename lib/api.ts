@@ -40,6 +40,14 @@ import type {
   CreateFeeRequestBody,
   UpdateFeeRequestBody,
   AssociateFeeClassesRequestBody,
+  AdminProvincesResponse,
+  AdminProvinceCitiesResponse,
+  AdminStudentCodeResponse,
+  AdminStudentsListResponse,
+  AdminStudentDetailResponse,
+  AdminClassStudentsResponse,
+  CreateStudentRequestBody,
+  UpdateStudentRequestBody,
 } from "./types";
 
 const TOKEN_KEY = "schoolpay_token";
@@ -805,6 +813,140 @@ export const api = {
       return request(`/api/v1/admin/fees/${feeId}/classes/dissociate`, {
         method: "DELETE",
         body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Provinces / Villes (formulaires étudiants)
+    getProvinces(token: string | null): Promise<AdminProvincesResponse> {
+      return request<AdminProvincesResponse>("/api/v1/admin/provinces", {
+        method: "GET",
+        token,
+      });
+    },
+
+    getProvinceCities(
+      token: string | null,
+      provinceId: string | number
+    ): Promise<AdminProvinceCitiesResponse> {
+      return request<AdminProvinceCitiesResponse>(
+        `/api/v1/admin/provinces/${provinceId}/cities`,
+        { method: "GET", token }
+      );
+    },
+
+    // Étudiants (students)
+    generateStudentCode(
+      token: string | null
+    ): Promise<AdminStudentCodeResponse> {
+      return request<AdminStudentCodeResponse>(
+        "/api/v1/admin/students/generate-code",
+        { method: "GET", token }
+      );
+    },
+
+    getStudents(
+      token: string | null,
+      page = 1
+    ): Promise<AdminStudentsListResponse> {
+      return request<AdminStudentsListResponse>(
+        `/api/v1/admin/students?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getStudent(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminStudentDetailResponse> {
+      return request<AdminStudentDetailResponse>(
+        `/api/v1/admin/students/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    getClassStudents(
+      token: string | null,
+      classId: string | number,
+      page = 1
+    ): Promise<AdminClassStudentsResponse> {
+      return request<AdminClassStudentsResponse>(
+        `/api/v1/admin/classes/${classId}/students?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createStudent(
+      token: string | null,
+      body: CreateStudentRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/students", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateStudent(
+      token: string | null,
+      id: string | number,
+      body: UpdateStudentRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteStudent(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreStudent(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${id}/restore`, {
+        method: "POST",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async approveStudent(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${id}/approve`, {
+        method: "POST",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async disapproveStudent(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${id}/disapprove`, {
+        method: "POST",
         token,
         withCsrf: true,
       });

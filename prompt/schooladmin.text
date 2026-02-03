@@ -861,3 +861,6 @@ DELETE /api/v1/admin/fees/2/classes/dissociate donne la possibilité de retirer 
 
 
 POST /api/v1/admin/fees/10/restore
+
+
+6. Student fees : ici il s'agit des frais
