@@ -102,7 +102,6 @@ export default function EditClassPage() {
     setSubmitting(true);
     api.admin
       .updateClass(token, id, {
-        school_id: Number(schoolId),
         school_year_id: Number(schoolYearId),
         name: name.trim(),
         level: level.trim(),
@@ -177,36 +176,24 @@ export default function EditClassPage() {
           </div>
         )}
 
-        {/* École : lecture seule pour school_admin */}
-        <div>
-          <label
-            htmlFor="school_id"
-            className="block text-sm font-medium text-slate-700 mb-1.5"
-          >
-            École <span className="text-red-500">*</span>
-          </label>
-          {optionsAsSchoolAdmin?.school ? (
+        {/* École : visible uniquement pour super_admin ; school_admin a son école en auto (champ caché) */}
+        {options && "schools" in options && (
+          <div>
+            <label
+              htmlFor="school_id"
+              className="block text-sm font-medium text-slate-700 mb-1.5"
+            >
+              École <span className="text-red-500">*</span>
+            </label>
             <input
               id="school_id"
               type="text"
-              value={optionsAsSchoolAdmin.school.name ?? ""}
+              value={options.schools.find((s) => String(s.id) === schoolId)?.name ?? schoolId}
               readOnly
               className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600"
             />
-          ) : (
-            <input
-              id="school_id"
-              type="text"
-              value={
-                options && "schools" in options
-                  ? options.schools.find((s) => String(s.id) === schoolId)?.name ?? schoolId
-                  : schoolId
-              }
-              readOnly
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600"
-            />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Année scolaire : modifiable */}
         <div>

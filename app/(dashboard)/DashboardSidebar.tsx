@@ -8,6 +8,8 @@ import {
   GraduationCap,
   CalendarDays,
   UsersRound,
+  Banknote,
+  Receipt,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +35,8 @@ export default function DashboardSidebar() {
           { href: "/dashboard/users", label: "Utilisateurs", icon: Users },
           { href: "/dashboard/schools", label: "Écoles", icon: Building2 },
           { href: "/dashboard/classes", label: "Classes", icon: GraduationCap },
+          { href: "/dashboard/fee-types", label: "Types de frais", icon: Banknote },
+          { href: "/dashboard/fees", label: "Frais", icon: Receipt },
         ]
       : []),
     ...(isSchoolAdmin
@@ -40,6 +44,8 @@ export default function DashboardSidebar() {
           { href: "/dashboard/school-years", label: "Années scolaires", icon: CalendarDays },
           { href: "/dashboard/student-groups", label: "Groupes d'élèves", icon: UsersRound },
           { href: "/dashboard/classes", label: "Classes", icon: GraduationCap },
+          { href: "/dashboard/fee-types", label: "Types de frais", icon: Banknote },
+          { href: "/dashboard/fees", label: "Frais", icon: Receipt },
         ]
       : []),
   ];

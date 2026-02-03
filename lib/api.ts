@@ -29,6 +29,17 @@ import type {
   AdminClassDetailResponse,
   CreateClassRequestBody,
   UpdateClassRequestBody,
+  AdminFeeTypesListResponse,
+  AdminFeeTypeDetailResponse,
+  CreateFeeTypeRequestBody,
+  UpdateFeeTypeRequestBody,
+  AdminFeesListResponse,
+  AdminFeesStatisticsResponse,
+  AdminFeeInstallmentsResponse,
+  AdminFeeDetailResponse,
+  CreateFeeRequestBody,
+  UpdateFeeRequestBody,
+  AssociateFeeClassesRequestBody,
 } from "./types";
 
 const TOKEN_KEY = "schoolpay_token";
@@ -605,6 +616,195 @@ export const api = {
       return request(`/api/v1/admin/classes/${id}/restore`, {
         method: "POST",
         body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Types de frais (fee-types) - school_admin / superadmin
+    getFeeTypes(
+      token: string | null,
+      page = 1
+    ): Promise<AdminFeeTypesListResponse> {
+      return request<AdminFeeTypesListResponse>(
+        `/api/v1/admin/fee-types?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getFeeType(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminFeeTypeDetailResponse> {
+      return request<AdminFeeTypeDetailResponse>(
+        `/api/v1/admin/fee-types/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createFeeType(
+      token: string | null,
+      body: CreateFeeTypeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/fee-types", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateFeeType(
+      token: string | null,
+      id: string | number,
+      body: UpdateFeeTypeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fee-types/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteFeeType(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fee-types/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreFeeType(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fee-types/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Frais (fees) - section 5
+    getFees(token: string | null, page = 1): Promise<AdminFeesListResponse> {
+      return request<AdminFeesListResponse>(`/api/v1/admin/fees?page=${page}`, {
+        method: "GET",
+        token,
+      });
+    },
+
+    getFeesStatistics(
+      token: string | null
+    ): Promise<AdminFeesStatisticsResponse> {
+      return request<AdminFeesStatisticsResponse>(
+        "/api/v1/admin/fees/statistics",
+        { method: "GET", token }
+      );
+    },
+
+    getFee(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminFeeDetailResponse> {
+      return request<AdminFeeDetailResponse>(`/api/v1/admin/fees/${id}`, {
+        method: "GET",
+        token,
+      });
+    },
+
+    getFeeInstallments(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminFeeInstallmentsResponse> {
+      return request<AdminFeeInstallmentsResponse>(
+        `/api/v1/admin/fees/${id}/installments`,
+        { method: "GET", token }
+      );
+    },
+
+    async createFee(
+      token: string | null,
+      body: CreateFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: { fee?: { id: number } } }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/fees", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateFee(
+      token: string | null,
+      id: string | number,
+      body: UpdateFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fees/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteFee(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fees/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreFee(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fees/${id}/restore`, {
+        method: "POST",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async associateFeeClasses(
+      token: string | null,
+      feeId: string | number,
+      body: AssociateFeeClassesRequestBody
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fees/${feeId}/classes/associate`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async dissociateFeeClasses(
+      token: string | null,
+      feeId: string | number,
+      body: AssociateFeeClassesRequestBody
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/fees/${feeId}/classes/dissociate`, {
+        method: "DELETE",
+        body: JSON.stringify(body),
         token,
         withCsrf: true,
       });

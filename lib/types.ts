@@ -474,7 +474,6 @@ export interface CreateClassRequestBody {
 }
 
 export interface UpdateClassRequestBody {
-  school_id?: number;
   school_year_id?: number;
   name?: string;
   level?: string;
@@ -484,4 +483,162 @@ export interface AdminClassDetailResponse {
   status: string;
   data: AdminClassListItem;
   message: string;
+}
+
+// Admin API - Types de frais (fee-types) - school_admin / superadmin
+export interface AdminFeeTypeSchoolRef {
+  id: number;
+  name: string;
+}
+
+export interface AdminFeeTypeListItem {
+  id: number;
+  name: string;
+  description: string | null;
+  payable_by: string;
+  school?: AdminFeeTypeSchoolRef;
+  school_id?: number;
+  created_by: string | { id: string; full_name: string };
+  updated_by: string | { id: string; full_name: string };
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+export interface FeeTypePagination {
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  from: number;
+  to: number;
+}
+
+export interface AdminFeeTypesListResponse {
+  status: string;
+  data: {
+    fee_types: AdminFeeTypeListItem[];
+    pagination: FeeTypePagination;
+  };
+  message: string;
+}
+
+export interface AdminFeeTypeDetailResponse {
+  status: string;
+  data: AdminFeeTypeListItem;
+  message: string;
+}
+
+/** school_admin: pas de school_id (backend l'infère). super_admin: school_id requis. payable_by = "parent" par défaut (caché en UI). */
+export interface CreateFeeTypeRequestBody {
+  school_id?: number;
+  name: string;
+  description?: string;
+  payable_by?: string;
+}
+
+export interface UpdateFeeTypeRequestBody {
+  name?: string;
+  description?: string;
+}
+
+// Admin API - Frais (fees) - section 5
+export interface AdminFeeTypeRef {
+  id: number;
+  name: string;
+  payable_by?: string;
+  school?: { id: number; name: string };
+}
+
+export interface AdminFeeInstallmentItem {
+  id?: number;
+  installment_no?: number;
+  amount: number;
+  due_date: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface AdminFeeListItem {
+  id: number;
+  amount: number;
+  due_date: string;
+  fee_type: AdminFeeTypeRef;
+  installments: AdminFeeInstallmentItem[];
+  associated_classes_count?: number;
+  associated_classes?: { id: number; name: string }[];
+  created_by: string | { id: string; full_name: string };
+  updated_by: string | { id: string; full_name: string };
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+export interface AdminFeesListResponse {
+  status: string;
+  data: {
+    fees: AdminFeeListItem[];
+    pagination: FeeTypePagination;
+  };
+  message: string;
+}
+
+export interface AdminFeesStatisticsResponse {
+  status: string;
+  data: {
+    general: {
+      total_fees: number;
+      total_amount: number;
+      average_amount: number;
+      fees_with_installments: number;
+      fees_without_installments: number;
+      percentage_with_installments: number;
+      average_installments_per_fee: number;
+    };
+    by_type: { type: string; count: number; total_amount: number; average_amount: number }[];
+    by_month: unknown[];
+  };
+  message: string;
+}
+
+export interface AdminFeeInstallmentsResponse {
+  status: string;
+  data: {
+    fee: { id: number; amount: number; due_date: string };
+    installments: AdminFeeInstallmentItem[];
+    total_amount: number;
+    installments_count: number;
+  };
+  message: string;
+}
+
+export interface AdminFeeDetailResponse {
+  status: string;
+  data: AdminFeeListItem;
+  message: string;
+}
+
+export interface CreateFeeInstallmentItem {
+  amount: number;
+  due_date: string;
+}
+
+export interface CreateFeeRequestBody {
+  fee_type_id: number;
+  amount: number;
+  due_date: string;
+  installments?: CreateFeeInstallmentItem[];
+  class_ids?: number[];
+}
+
+export interface UpdateFeeRequestBody {
+  fee_type_id?: number;
+  amount?: number;
+  due_date?: string;
+  installments?: CreateFeeInstallmentItem[];
+  class_ids?: number[];
+}
+
+export interface AssociateFeeClassesRequestBody {
+  class_ids: number[];
 }

@@ -289,3 +289,575 @@ pour améliorer l'exprerience utilisateur afin d'avoir le body qu'il faut
 DELETE /api/v1/admin/classes/2
 
 POST /api/v1/admin/classes/2/restore
+
+
+
+
+4. Maintenant nous possedons aux différentes créations des types des frais
+
+GET /api/v1/admin/fee-types :
+
+{
+    "status": "success",
+    "message": "Liste des types de frais récupérée avec succès",
+    "data": {
+        "fee_types": [
+            {
+                "id": 2,
+                "name": "Frais de scolarité 2",
+                "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                "payable_by": "parent",
+                "school": {
+                    "id": 1,
+                    "name": "École Primaire Sainte Thérèse"
+                },
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T14:09:57+00:00",
+                "updated_at": "2026-01-08T14:16:17+00:00"
+            },
+            {
+                "id": 1,
+                "name": "Frais de scolarité",
+                "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                "payable_by": "parent",
+                "school": {
+                    "id": 1,
+                    "name": "École Primaire Sainte Thérèse"
+                },
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T14:03:43+00:00",
+                "updated_at": "2026-01-08T14:03:43+00:00"
+            }
+        ],
+        "pagination": {
+            "total": 2,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1,
+            "from": 1,
+            "to": 2
+        }
+    }
+}
+
+POST /api/v1/admin/fee-types :
+
+{
+    "name": "Frais de scolarité",
+    "description": "Frais annuels de scolarité pour l'année 2024-2025",
+    "payable_by": "parent" // par défaut et cela doit etre hidden de l'uitilisateur
+}
+
+
+PUT /api/v1/admin/fee-types/2
+
+
+{
+    "name": "Frais de scolarité",
+    "description": "Frais annuels de scolarité pour l'année 2024-2025"
+}
+
+
+DELETE /api/v1/admin/fee-types/2
+
+POST /api/v1/admin/fee-types/2/restore
+
+
+
+On peut aussi donner à l'admin la possibilité de CRUD DE Fee type mais avec les endpoints
+
+GET /api/v1/admin/fee-types
+
+POST /api/v1/admin/fee-types
+
+{
+    "school_id": 1,
+    "name": "Frais de scolarité 1",
+    "description": "Frais annuels de scolarité pour l'année 2024-2025",
+    "payable_by": "parent"
+}
+
+DELETE /api/v1/admin/fee-types/1
+
+POST /api/v1/admin/fee-types/1/restore
+
+GET /api/v1/admin/schools/1/fee-types
+
+{
+    "status": "success",
+    "message": "Types de frais de l'école récupérés avec succès",
+    "data": {
+        "school": {
+            "id": 1,
+            "name": "École Primaire Sainte Thérèse",
+            "type_id": 1,
+            "address": "Commune de Lingwala, Kinshasa",
+            "phone": "+243 81 700 0011",
+            "logo_path": null,
+            "created_at": "2025-12-17T14:33:51.000000Z",
+            "updated_at": "2025-12-17T14:33:51.000000Z",
+            "created_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "updated_by": "04263b35-e163-4403-a4d8-833673a3898f",
+            "deleted_at": null
+        },
+        "fee_types": [
+            {
+                "id": 1,
+                "school_id": 1,
+                "name": "Frais de scolarité",
+                "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                "payable_by": "parent",
+                "created_at": "2026-01-08T14:03:43.000000Z",
+                "updated_at": "2026-01-08T14:03:43.000000Z",
+                "created_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test",
+                    "phone_or_email": "test@gmail.com",
+                    "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                    "two_factor_confirmed_at": null,
+                    "initial_password_set": true,
+                    "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                    "created_at": "2025-12-17T18:23:56.000000Z",
+                    "updated_at": "2026-01-31T13:45:13.000000Z",
+                    "deleted_at": null
+                },
+                "updated_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test",
+                    "phone_or_email": "test@gmail.com",
+                    "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                    "two_factor_confirmed_at": null,
+                    "initial_password_set": true,
+                    "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                    "created_at": "2025-12-17T18:23:56.000000Z",
+                    "updated_at": "2026-01-31T13:45:13.000000Z",
+                    "deleted_at": null
+                },
+                "deleted_at": null
+            },
+            {
+                "id": 2,
+                "school_id": 1,
+                "name": "Frais de scolarité 2",
+                "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                "payable_by": "parent",
+                "created_at": "2026-01-08T14:09:57.000000Z",
+                "updated_at": "2026-01-08T14:16:17.000000Z",
+                "created_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test",
+                    "phone_or_email": "test@gmail.com",
+                    "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                    "two_factor_confirmed_at": null,
+                    "initial_password_set": true,
+                    "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                    "created_at": "2025-12-17T18:23:56.000000Z",
+                    "updated_at": "2026-01-31T13:45:13.000000Z",
+                    "deleted_at": null
+                },
+                "updated_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test",
+                    "phone_or_email": "test@gmail.com",
+                    "avatar_path": "avatars/07c37f1d-ac0c-4579-8907-0d30993fab1b.png",
+                    "two_factor_confirmed_at": null,
+                    "initial_password_set": true,
+                    "email_verified_at": "2025-12-17T18:23:56.000000Z",
+                    "created_at": "2025-12-17T18:23:56.000000Z",
+                    "updated_at": "2026-01-31T13:45:13.000000Z",
+                    "deleted_at": null
+                },
+                "deleted_at": null
+            }
+        ],
+        "count": 2
+    }
+}
+
+
+
+5. Maintenant nous possedons aux crud de frais après avoir crud les types des frais
+
+
+GET /api/v1/admin/fees/ :
+
+{
+    "status": "success",
+    "message": "Liste des frais récupérée avec succès",
+    "data": {
+        "fees": [
+            {
+                "id": 2,
+                "amount": 500000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [],
+                "associated_classes_count": 0,
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T17:17:52+00:00",
+                "updated_at": "2026-01-08T17:17:52+00:00"
+            },
+            {
+                "id": 3,
+                "amount": 500000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [
+                    {
+                        "id": 2,
+                        "installment_no": 1,
+                        "amount": 500000,
+                        "due_date": "2024-12-31"
+                    }
+                ],
+                "associated_classes_count": 1,
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T17:18:20+00:00",
+                "updated_at": "2026-01-08T17:18:20+00:00"
+            },
+            {
+                "id": 5,
+                "amount": 500000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 2,
+                    "name": "Frais de scolarité 2",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [
+                    {
+                        "id": 4,
+                        "installment_no": 1,
+                        "amount": 500000,
+                        "due_date": "2024-12-31"
+                    }
+                ],
+                "associated_classes_count": 1,
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T17:19:47+00:00",
+                "updated_at": "2026-01-08T17:19:47+00:00"
+            },
+            {
+                "id": 1,
+                "amount": 500000,
+                "due_date": "2025-02-20",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [
+                    {
+                        "id": 1,
+                        "installment_no": 1,
+                        "amount": 500000,
+                        "due_date": "2025-02-20"
+                    }
+                ],
+                "associated_classes_count": 0,
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-08T17:09:41+00:00",
+                "updated_at": "2026-01-08T17:09:41+00:00"
+            }
+        ],
+        "pagination": {
+            "total": 9,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1,
+            "from": 1,
+            "to": 9
+        }
+    }
+}
+
+
+GET /api/v1/admin/fees/statistics :
+
+{
+    "status": "success",
+    "message": "Statistiques des frais récupérées avec succès",
+    "data": {
+        "general": {
+            "total_fees": 9,
+            "total_amount": 4500000,
+            "average_amount": 500000,
+            "fees_with_installments": 8,
+            "fees_without_installments": 1,
+            "percentage_with_installments": 88.88888888888889,
+            "average_installments_per_fee": 1.13
+        },
+        "by_type": [
+            {
+                "type": "Frais de scolarité",
+                "count": 8,
+                "total_amount": 4000000,
+                "average_amount": 500000
+            },
+            {
+                "type": "Frais de scolarité 2",
+                "count": 1,
+                "total_amount": 500000,
+                "average_amount": 500000
+            }
+        ],
+        "by_month": []
+    }
+}
+
+GET /api/v1/admin/fees/10/installments :   permet de voir les tranches d'un frais :
+
+{
+    "status": "success",
+    "message": "Tranches du frais récupérées avec succès",
+    "data": {
+        "fee": {
+            "id": 10,
+            "amount": 500000,
+            "due_date": "2025-12-30"
+        },
+        "installments": [
+            {
+                "id": 31,
+                "installment_no": 1,
+                "amount": 300000,
+                "due_date": "2024-06-30",
+                "created_at": "2026-01-12T14:13:42+00:00",
+                "updated_at": "2026-01-12T14:13:42+00:00"
+            },
+            {
+                "id": 32,
+                "installment_no": 2,
+                "amount": 200000,
+                "due_date": "2024-06-30",
+                "created_at": "2026-01-12T14:13:43+00:00",
+                "updated_at": "2026-01-12T14:13:43+00:00"
+            }
+        ],
+        "total_amount": 500000,
+        "installments_count": 2
+    }
+}
+
+
+GET /api/v1/admin/fee-types/1/fees
+
+
+{
+    "status": "success",
+    "message": "Frais du type de frais récupérés avec succès",
+    "data": {
+        "fee_type": {
+            "id": 1,
+            "school_id": 1,
+            "name": "Frais de scolarité",
+            "description": "Frais annuels de scolarité pour l'année 2024-2025",
+            "payable_by": "parent",
+            "created_at": "2026-01-08T14:03:43.000000Z",
+            "updated_at": "2026-02-03T13:33:09.000000Z",
+            "created_by": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "updated_by": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "deleted_at": null,
+            "school": {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "type_id": 1,
+                "address": "Commune de Lingwala, Kinshasa",
+                "phone": "+243 81 700 0011",
+                "logo_path": null,
+                "created_at": "2025-12-17T14:33:51.000000Z",
+                "updated_at": "2025-12-17T14:33:51.000000Z",
+                "created_by": "04263b35-e163-4403-a4d8-833673a3898f",
+                "updated_by": "04263b35-e163-4403-a4d8-833673a3898f",
+                "deleted_at": null
+            }
+        },
+        "fees": [
+            {
+                "id": 2,
+                "amount": 500000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [],
+                "associated_classes": [],
+                "created_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test"
+                },
+                "updated_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test"
+                },
+                "created_at": "2026-01-08T17:17:52+00:00",
+                "updated_at": "2026-01-08T17:17:52+00:00",
+                "deleted_at": null
+            },
+            {
+                "id": 3,
+                "amount": 500000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "description": "Frais annuels de scolarité pour l'année 2024-2025",
+                    "payable_by": "parent",
+                    "school": {
+                        "id": 1,
+                        "name": "École Primaire Sainte Thérèse"
+                    }
+                },
+                "installments": [
+                    {
+                        "id": 2,
+                        "installment_no": 1,
+                        "amount": 500000,
+                        "due_date": "2024-12-31",
+                        "created_at": "2026-01-08T17:18:20+00:00",
+                        "updated_at": "2026-01-08T17:18:20+00:00"
+                    }
+                ],
+                "associated_classes": [
+                    {
+                        "id": 1,
+                        "name": "Premier primaire 2024-2025"
+                    }
+                ],
+                "created_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test"
+                },
+                "updated_by": {
+                    "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+                    "full_name": "Test"
+                },
+                "created_at": "2026-01-08T17:18:20+00:00",
+                "updated_at": "2026-01-08T17:18:20+00:00",
+                "deleted_at": null
+            }
+        ],
+        "count": 8
+    }
+}
+
+
+POST /api/v1/admin/fees et PUT /api/v1/admin/fees/10
+
+// Le formulaire par défaut n'a que trois champs :
+        {
+            "fee_type_id": 1,
+            "amount": 500000,
+            "due_date": "2025-02-20"
+        }
+// mais avec un bouton "Ajout tranche" et lorsqu'on y clique pour la première fois cela doit load deux 
+champs required pour "tranche 1" et "tranche 2" et leur montant doit correspondre à ""amount": 500000," qui est dans
+"       {
+            "fee_type_id": 1,
+            "amount": 500000,
+            "due_date": "2025-02-20"
+        }"
+
+à partir du deuxième clique il ne doit ajouter qu'un seul champ comme "tranche 3" et la somme toutes
+les tranches doivent etre cohérents avec ""amount": 500000," qui est dans
+"       {
+            "fee_type_id": 1,
+            "amount": 500000,
+            "due_date": "2025-02-20"
+        }"
+
+Mais avec possibilité d'avoir aussi un bouton en opposé remove "tranche". Ce qui fait que si par exemple
+nous avous 4 champs des tranches, si je clique sur remove "tranche"n cette dernière s'enlève si nous
+arrivons à deux champs si je clique sur remove "tranche" tous les deux champs doivent disparaitre puisque
+dans le formulaire on a deux tranches.
+
+
+Aussi on a la possibilité d'assigner au moins une classe à un frais créé avec multiple select "https://react-select.com/home"
+
+
+// 1. Frais simple (tranche unique par défaut) :
+
+        {
+            "fee_type_id": 1,
+            "amount": 500000,
+            "due_date": "2025-02-20"
+        }
+
+// 2. Frais avec classes (tranche unique par défaut) :
+
+        {
+            "fee_type_id": 1,
+            "amount": 500000,
+            "due_date": "2025-12-31",
+            "class_ids": [1]
+        }
+
+{
+    "fee_type_id": 1,
+    "amount": 500000,
+    "due_date": "2025-12-30",
+    "installments": [
+        {
+            "amount": 300000,
+            "due_date": "2024-06-30"
+        },
+        {
+            "amount": 200000,
+            "due_date": "2024-06-30"
+        }
+    ]
+    ,
+    "class_ids": [1,2]
+}
+
+
+DELETE /api/v1/admin/fees/10
+
+POST /api/v1/admin/fees/10/classes/associate donne la possibilité d'associer une classe à frais
+
+{
+    "class_ids": [1]
+}
+
+DELETE /api/v1/admin/fees/2/classes/dissociate donne la possibilité de retirer une classe à un frais
+
+
+
+POST /api/v1/admin/fees/10/restore
