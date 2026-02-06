@@ -223,7 +223,15 @@ export default function StudentGroupDetailPage() {
           </div>
           <div className="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-slate-500">Frais associés</dt>
-            <dd className="mt-1 text-sm text-slate-900 sm:col-span-2">{group.group_fees_count}</dd>
+            <dd className="mt-1 text-sm text-slate-900 sm:col-span-2 flex items-center gap-2">
+              {group.group_fees_count} frais
+              <Link
+                href={`/dashboard/student-groups/${id}/fees`}
+                className="text-schoolpay-accent hover:underline font-medium"
+              >
+                Gérer les frais
+              </Link>
+            </dd>
           </div>
           {isDeleted && group.deleted_at && (
             <div className="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">

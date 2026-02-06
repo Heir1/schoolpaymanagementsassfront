@@ -1,43 +1,22 @@
 "use client";
 
 import { api, getToken } from "@/lib/api";
-import type { AdminSchoolListItem } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function NewStudentGroupPage() {
+export default function NewInscriptionDocumentPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [schools, setSchools] = useState<AdminSchoolListItem[]>([]);
-  const [schoolsLoading, setSchoolsLoading] = useState(true);
-  const [schoolId, setSchoolId] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSchools = useCallback(() => {
-    const token = getToken();
-    if (!token) return;
-    setSchoolsLoading(true);
-    api.admin
-      .getSchools(token, 1)
-      .then((res) => {
-        setSchools(res.data.data.filter((s) => !s.deleted_at));
-        if (res.data.data.length > 0 && !schoolId) {
-          const first = res.data.data.find((s) => !s.deleted_at);
-          if (first) setSchoolId(String(first.id));
-        }
-      })
-      .catch(() => setError("Impossible de charger les écoles."))
-      .finally(() => setSchoolsLoading(false));
-  }, []);
-
   useEffect(() => {
-    if (user?.role.name !== "school_admin" && user?.role.name !== "superadmin") {
+    if (user?.role.name !== "superadmin") {
       router.replace("/dashboard");
       return;
     }
@@ -46,18 +25,13 @@ export default function NewStudentGroupPage() {
       router.replace("/login");
       return;
     }
-    fetchSchools();
-  }, [user?.role.name, router, fetchSchools]);
+  }, [user?.role.name, router]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!schoolId.trim()) {
-      setError("L'école est requise.");
-      return;
-    }
     if (!name.trim()) {
-      setError("Le nom du groupe est requis.");
+      setError("Le nom du document est requis.");
       return;
     }
     const token = getToken();
@@ -67,12 +41,11 @@ export default function NewStudentGroupPage() {
     }
     setSubmitting(true);
     api.admin
-      .createStudentGroup(token, {
-        school_id: Number(schoolId),
+      .createInscriptionDocument(token, {
         name: name.trim(),
         description: description.trim() || undefined,
       })
-      .then(() => router.push("/dashboard/student-groups"))
+      .then(() => router.push("/dashboard/inscription-documents"))
       .catch((e) => {
         setError(e instanceof Error ? e.message : "Erreur lors de la création.");
       })
@@ -80,12 +53,12 @@ export default function NewStudentGroupPage() {
   }
 
   if (!user) return null;
-  if (user.role.name !== "school_admin" && user.role.name !== "superadmin") return null;
+  if (user.role.name !== "superadmin") return null;
 
   return (
     <div className="p-6 lg:p-8">
       <Link
-        href="/dashboard/student-groups"
+        href="/dashboard/inscription-documents"
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -93,10 +66,10 @@ export default function NewStudentGroupPage() {
       </Link>
 
       <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight mb-2">
-        Ajouter un groupe d&apos;élèves
+        Ajouter un document d&apos;inscription
       </h1>
       <p className="text-slate-600 mb-8">
-        Renseignez le nom et la description du groupe (ex. handicapés, enfants des enseignants).
+        Définissez un type de document requis pour l&apos;inscription (ex. bulletin, certificat de naissance).
       </p>
 
       <form
@@ -117,14 +90,14 @@ export default function NewStudentGroupPage() {
             htmlFor="name"
             className="block text-sm font-medium text-slate-700 mb-1.5"
           >
-            Nom du groupe <span className="text-red-500">*</span>
+            Nom <span className="text-red-500">*</span>
           </label>
           <input
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex. Handicapés, Enfants des enseignants"
+            placeholder="Ex. Bulletin premier trimestre"
             className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-schoolpay-accent focus:border-schoolpay-accent"
           />
         </div>
@@ -141,7 +114,7 @@ export default function NewStudentGroupPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            placeholder="Description du groupe (optionnel)"
+            placeholder="Description du document (optionnel)"
             className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-schoolpay-accent focus:border-schoolpay-accent"
           />
         </div>
@@ -149,14 +122,14 @@ export default function NewStudentGroupPage() {
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            disabled={submitting || schoolsLoading}
+            disabled={submitting}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-schoolpay-accent text-white text-sm font-semibold hover:bg-schoolpay-accent-hover disabled:opacity-50"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            Créer le groupe
+            Créer le document
           </button>
           <Link
-            href="/dashboard/student-groups"
+            href="/dashboard/inscription-documents"
             className="inline-flex items-center px-4 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50"
           >
             Annuler

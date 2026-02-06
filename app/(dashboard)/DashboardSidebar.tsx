@@ -11,6 +11,7 @@ import {
   Banknote,
   Receipt,
   BookUser,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -39,6 +40,7 @@ export default function DashboardSidebar() {
           { href: "/dashboard/students", label: "Étudiants", icon: BookUser },
           { href: "/dashboard/fee-types", label: "Types de frais", icon: Banknote },
           { href: "/dashboard/fees", label: "Frais", icon: Receipt },
+          { href: "/dashboard/inscription-documents", label: "Documents d'inscription", icon: FileText },
         ]
       : []),
     ...(isSchoolAdmin

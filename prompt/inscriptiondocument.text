@@ -1,0 +1,250 @@
+1. Cette première partie est pour le role super_admin
+
+GET /api/v1/admin/inscription-documents/statistics :
+
+{
+    "status": "success",
+    "data": {
+        "total_documents": 2,
+        "active_documents": 2,
+        "deleted_documents": 0,
+        "most_required_documents": [
+            {
+                "id": 1,
+                "name": "Bulletin premier primaire",
+                "required_by_classes_count": 1
+            },
+            {
+                "id": 2,
+                "name": "Test primaire primaire",
+                "required_by_classes_count": 1
+            }
+        ],
+        "recent_documents_last_30_days": 0
+    },
+    "message": "Statistiques récupérées avec succès"
+}
+
+GET /api/v1/admin/inscription-documents :
+
+{
+    "status": "success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 1,
+                "name": "Bulletin premier primaire",
+                "description": "Bulletin premier primaire",
+                "full_name": "Bulletin premier primaire - Bulletin premier primaire",
+                "required_by_classes_count": 1,
+                "mandatory_by_classes_count": 1,
+                "student_documents_count": 0,
+                "created_at": "2025-12-19T14:56:58.000000Z",
+                "updated_at": "2025-12-19T14:56:58.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "status": "active",
+                "deleted_since": null
+            },
+            {
+                "id": 2,
+                "name": "Test primaire primaire",
+                "description": "Test primaire primaire",
+                "full_name": "Test primaire primaire - Test primaire primaire",
+                "required_by_classes_count": 1,
+                "mandatory_by_classes_count": 0,
+                "student_documents_count": 0,
+                "created_at": "2025-12-19T14:58:27.000000Z",
+                "updated_at": "2025-12-19T15:06:10.000000Z",
+                "deleted_at": null,
+                "is_deleted": false,
+                "status": "active",
+                "deleted_since": null
+            }
+        ],
+        "first_page_url": "http://localhost:8000/api/v1/admin/inscription-documents?page=1",
+        "from": 1,
+        "last_page": 1,
+        "last_page_url": "http://localhost:8000/api/v1/admin/inscription-documents?page=1",
+        "links": [
+            {
+                "url": null,
+                "label": "&laquo; Previous",
+                "page": null,
+                "active": false
+            },
+            {
+                "url": "http://localhost:8000/api/v1/admin/inscription-documents?page=1",
+                "label": "1",
+                "page": 1,
+                "active": true
+            },
+            {
+                "url": null,
+                "label": "Next &raquo;",
+                "page": null,
+                "active": false
+            }
+        ],
+        "next_page_url": null,
+        "path": "http://localhost:8000/api/v1/admin/inscription-documents",
+        "per_page": 15,
+        "prev_page_url": null,
+        "to": 2,
+        "total": 2,
+        "statistics": {
+            "total": 2,
+            "active": 2,
+            "deleted": 0,
+            "current_filter": 2
+        },
+        "filters": {
+            "status": "active",
+            "search": null,
+            "sort_by": "name",
+            "sort_dir": "asc",
+            "per_page": 15
+        }
+    },
+    "message": "Liste des documents d'inscription récupérée avec succès"
+}
+
+
+POST /api/v1/admin/inscription-documents et PUT /api/v1/admin/inscription-documents/2:
+
+{
+    "name": "Test primaire primaire",
+    "description": "Test primaire primaire"
+}
+
+
+DELETE /api/v1/admin/inscription-documents/2
+
+
+POST /api/v1/admin/inscription-documents/2/restore
+
+
+2. Le document requis pour école. role school_admin
+
+GET /api/v1/admin/classes/1/required-documents :
+
+{
+    "status": "success",
+    "data": {
+        "class": {
+            "id": 1,
+            "name": "Premier primaire 2024-2025",
+            "level": "Primaire"
+        },
+        "required_documents": [
+            {
+                "id": 8,
+                "document": {
+                    "id": 1,
+                    "name": "Bulletin premier primaire",
+                    "description": "Bulletin premier primaire",
+                    "full_name": "Bulletin premier primaire - Bulletin premier primaire"
+                },
+                "is_mandatory": true,
+                "created_at": "2025-12-19T16:53:53.000000Z"
+            }
+        ],
+        "counts": {
+            "total": 2,
+            "mandatory": 2,
+            "optional": 0
+        }
+    },
+    "message": "Documents requis récupérés avec succès"
+}
+
+
+GET /api/v1/admin/classes/1/required-documents/available-documents :
+
+
+{
+    "status": "success",
+    "data": {
+        "class": {
+            "id": 1,
+            "name": "Premier primaire 2024-2025",
+            "level": "Primaire"
+        },
+        "required_documents": [
+            {
+                "id": 8,
+                "document": {
+                    "id": 1,
+                    "name": "Bulletin premier primaire",
+                    "description": "Bulletin premier primaire",
+                    "full_name": "Bulletin premier primaire - Bulletin premier primaire"
+                },
+                "is_mandatory": true,
+                "deleted_at": null,
+                "is_deleted": false,
+                "created_at": "2025-12-19T16:53:53.000000Z"
+            },
+            {
+                "id": 9,
+                "document": {
+                    "id": 2,
+                    "name": "Test primaire primaire",
+                    "description": "Test primaire primaire",
+                    "full_name": "Test primaire primaire - Test primaire primaire"
+                },
+                "is_mandatory": false,
+                "deleted_at": null,
+                "is_deleted": false,
+                "created_at": "2025-12-19T16:53:53.000000Z"
+            }
+        ],
+        "counts": {
+            "total": 2,
+            "active": 2,
+            "deleted": 0,
+            "mandatory_active": 1,
+            "optional_active": 1
+        }
+    },
+    "message": "Documents requis récupérés avec succès"
+}
+
+
+POST /api/v1/admin/classes/1/required-documents et /api/v1/admin/classes/1/required-documents/1 :
+
+{
+    "document_id": 1,
+    "is_mandatory": true
+}
+
+
+POST /api/v1/admin/classes/1/required-documents/bulk :
+
+{
+    "documents": [
+        {
+            "document_id": 1,
+            "is_mandatory": true
+        }
+    ]
+}
+
+
+PUT /api/v1/admin/classes/1/required-documents/bulk :
+
+{
+    "documents": [
+        {
+            "document_id": 2,
+            "is_mandatory": true
+        }
+    ]
+}
+
+
+
+POST /api/v1/admin/classes/1/required-documents/8/restore
+
+
+DELETE /api/v1/admin/classes/1/required-documents/8

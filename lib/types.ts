@@ -485,6 +485,57 @@ export interface AdminClassDetailResponse {
   message: string;
 }
 
+// Admin API - Documents requis par classe (school_admin)
+export interface AdminClassRequiredDocumentRef {
+  id: number;
+  name: string;
+  description: string | null;
+  full_name: string;
+}
+
+export interface AdminClassRequiredDocumentItem {
+  id: number;
+  document: AdminClassRequiredDocumentRef;
+  is_mandatory: boolean;
+  created_at: string;
+  deleted_at?: string | null;
+  is_deleted?: boolean;
+}
+
+export interface AdminClassRequiredDocumentsCounts {
+  total: number;
+  mandatory?: number;
+  optional?: number;
+  active?: number;
+  deleted?: number;
+  mandatory_active?: number;
+  optional_active?: number;
+}
+
+export interface AdminClassRequiredDocumentsResponse {
+  status: string;
+  data: {
+    class: { id: number; name: string; level: string };
+    required_documents: AdminClassRequiredDocumentItem[];
+    counts: AdminClassRequiredDocumentsCounts;
+  };
+  message: string;
+}
+
+export interface AddClassRequiredDocumentRequestBody {
+  document_id: number;
+  is_mandatory: boolean;
+}
+
+export interface ClassRequiredDocumentsBulkItem {
+  document_id: number;
+  is_mandatory: boolean;
+}
+
+export interface ClassRequiredDocumentsBulkRequestBody {
+  documents: ClassRequiredDocumentsBulkItem[];
+}
+
 // Admin API - Types de frais (fee-types) - school_admin / superadmin
 export interface AdminFeeTypeSchoolRef {
   id: number;
@@ -539,6 +590,61 @@ export interface CreateFeeTypeRequestBody {
 
 export interface UpdateFeeTypeRequestBody {
   name?: string;
+  description?: string;
+}
+
+// Admin API - Documents d'inscription (super_admin)
+export interface AdminInscriptionDocumentListItem {
+  id: number;
+  name: string;
+  description: string | null;
+  full_name: string;
+  required_by_classes_count: number;
+  mandatory_by_classes_count: number;
+  student_documents_count: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  is_deleted: boolean;
+  status: string;
+  deleted_since: string | null;
+}
+
+export interface AdminInscriptionDocumentsStatisticsResponse {
+  status: string;
+  data: {
+    total_documents: number;
+    active_documents: number;
+    deleted_documents: number;
+    most_required_documents: { id: number; name: string; required_by_classes_count: number }[];
+    recent_documents_last_30_days: number;
+  };
+  message: string;
+}
+
+export interface AdminInscriptionDocumentsListResponse {
+  status: string;
+  data: PaginatedMeta & {
+    data: AdminInscriptionDocumentListItem[];
+    statistics?: { total: number; active: number; deleted: number; current_filter: number };
+    filters?: { status: string; search: string | null; sort_by: string; sort_dir: string; per_page: number };
+  };
+  message: string;
+}
+
+export interface AdminInscriptionDocumentDetailResponse {
+  status: string;
+  data: AdminInscriptionDocumentListItem;
+  message: string;
+}
+
+export interface CreateInscriptionDocumentRequestBody {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateInscriptionDocumentRequestBody {
+  name: string;
   description?: string;
 }
 
@@ -820,6 +926,117 @@ export interface AdminClassStudentsResponse {
   data: {
     students: AdminStudentListItem[];
     pagination?: FeeTypePagination;
+  };
+  message: string;
+}
+
+// Frais par étudiant (student fees) - GET /students/:id/fees
+export interface AdminStudentFeesStudentRef {
+  id: number;
+  code: string;
+  full_name: string;
+  class: { id: number; name: string; school?: { id: number; name: string } };
+}
+
+export interface AdminStudentFeeListItem {
+  id: number;
+  student_id: number;
+  amount: number;
+  due_date: string;
+  fee_type: { id: number; name: string; payable_by?: string };
+  installments: { id?: number; installment_no: number; amount: number; due_date: string }[];
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+export interface AdminStudentFeesListResponse {
+  status: string;
+  data: {
+    student: AdminStudentFeesStudentRef;
+    fees: AdminStudentFeeListItem[];
+    pagination: FeeTypePagination;
+  };
+  message: string;
+}
+
+export interface CreateStudentFeeInstallmentItem {
+  installment_no: number;
+  amount: number;
+  due_date: string;
+}
+
+export interface CreateStudentFeeRequestBody {
+  fee_type_id: number;
+  amount: number;
+  due_date: string;
+  installments?: CreateStudentFeeInstallmentItem[];
+}
+
+export type UpdateStudentFeeRequestBody = CreateStudentFeeRequestBody;
+
+export interface AdminStudentFeeDetailResponse {
+  status: string;
+  data: AdminStudentFeeListItem & {
+    fee_type: { id: number; name: string; description?: string; payable_by?: string };
+    student: { id: number; code: string; full_name: string; class?: { id: number; name: string } };
+    created_by?: { id: string; full_name: string };
+    updated_by?: { id: string; full_name: string };
+  };
+  message: string;
+}
+
+// Frais par groupe d'élèves (student group fees) - GET /student-groups/:id/fees
+export interface AdminStudentGroupFeesGroupRef {
+  id: number;
+  name: string;
+  description: string | null;
+  school: { id: number; name: string };
+  students_count?: number;
+}
+
+export interface AdminStudentGroupFeeListItem {
+  id: number;
+  group_id: number;
+  amount: number;
+  due_date: string;
+  fee_type: { id: number; name: string; payable_by?: string };
+  installments: { id?: number; installment_no: number; amount: number; due_date: string }[];
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+}
+
+export interface AdminStudentGroupFeesListResponse {
+  status: string;
+  data: {
+    student_group: AdminStudentGroupFeesGroupRef;
+    fees: AdminStudentGroupFeeListItem[];
+    pagination: FeeTypePagination;
+  };
+  message: string;
+}
+
+export interface CreateStudentGroupFeeRequestBody {
+  fee_type_id: number;
+  amount: number;
+  due_date: string;
+  installments?: CreateStudentFeeInstallmentItem[];
+}
+
+export type UpdateStudentGroupFeeRequestBody = CreateStudentGroupFeeRequestBody;
+
+export interface AdminStudentGroupFeeDetailResponse {
+  status: string;
+  data: AdminStudentGroupFeeListItem & {
+    fee_type: { id: number; name: string; description?: string; payable_by?: string };
+    student_group: AdminStudentGroupFeesGroupRef;
+    created_by?: { id: string; full_name: string };
+    updated_by?: { id: string; full_name: string };
   };
   message: string;
 }

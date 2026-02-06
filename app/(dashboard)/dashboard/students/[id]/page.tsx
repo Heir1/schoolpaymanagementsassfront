@@ -341,26 +341,41 @@ export default function StudentDetailPage() {
         </section>
       )}
 
-      {s.student_fees && s.student_fees.length > 0 && (
-        <section className="mt-6 rounded-xl bg-white border border-slate-200/80 shadow-card p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+      <section className="mt-6 rounded-xl bg-white border border-slate-200/80 shadow-card p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
             <Receipt className="w-5 h-5 text-schoolpay-accent" />
             Frais associés
           </h2>
+          <Link
+            href={`/dashboard/students/${id}/fees`}
+            className="text-sm font-medium text-schoolpay-accent hover:underline"
+          >
+            Gérer les frais
+          </Link>
+        </div>
+        {s.student_fees && s.student_fees.length > 0 ? (
           <ul className="space-y-2">
             {s.student_fees.map((f) => (
               <li
                 key={f.id}
                 className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0"
               >
-                <span className="text-slate-700">Frais #{f.fee_type_id}</span>
+                <Link
+                  href={`/dashboard/students/${id}/fees/${f.id}`}
+                  className="text-slate-700 hover:text-schoolpay-accent hover:underline"
+                >
+                  Frais #{f.fee_type_id}
+                </Link>
                 <span className="font-medium text-slate-900">{formatAmount(f.amount)}</span>
                 <span className="text-sm text-slate-500">{formatDate(f.due_date)}</span>
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        ) : (
+          <p className="text-sm text-slate-500">Aucun frais assigné. Cliquez sur &quot;Gérer les frais&quot; pour en ajouter.</p>
+        )}
+      </section>
     </div>
   );
 }

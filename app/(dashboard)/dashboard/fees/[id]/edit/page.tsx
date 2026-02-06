@@ -123,7 +123,10 @@ export default function EditFeePage() {
 
   const installmentsSum = installments.reduce((s, t) => s + (Number(t.amount) || 0), 0);
   const totalAmount = Number(amount) || 0;
-  const installmentsValid = installments.length === 0 || installmentsSum === totalAmount;
+  const hasZeroOrNegativeInstallment =
+    installments.length > 0 && installments.some((t) => (Number(t.amount) || 0) <= 0);
+  const installmentsValid =
+    installments.length === 0 || (installmentsSum === totalAmount && !hasZeroOrNegativeInstallment);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -144,6 +147,15 @@ export default function EditFeePage() {
       setError(`La somme des tranches (${installmentsSum}) doit être égale au montant (${totalAmount}).`);
       return;
     }
+    if (installments.length > 0) {
+      const invalid = installments.some((t) => !t.due_date || (Number(t.amount) || 0) <= 0);
+      if (invalid) {
+        setError(
+          "Le montant d'une tranche ne peut pas être égal à 0 ou négatif. Chaque tranche doit avoir un montant strictement supérieur à 0 et une date d'échéance."
+        );
+        return;
+      }
+    }
     const token = getToken();
     if (!token) {
       router.replace("/login");
@@ -160,13 +172,14 @@ export default function EditFeePage() {
       fee_type_id: Number(feeTypeId),
       amount: totalAmount,
       due_date: dueDate,
+      installments:
+        installments.length > 0
+          ? installments.map((t) => ({
+              amount: Number(t.amount) || 0,
+              due_date: t.due_date,
+            }))
+          : [],
     };
-    if (installments.length > 0) {
-      body.installments = installments.map((t) => ({
-        amount: Number(t.amount) || 0,
-        due_date: t.due_date,
-      }));
-    }
     if (classIds.length > 0) body.class_ids = classIds;
     api.admin
       .updateFee(token, id, body)
@@ -289,10 +302,11 @@ export default function EditFeePage() {
                   <span className="text-sm font-medium text-slate-600 w-20">Tranche {i + 1}</span>
                   <input
                     type="number"
-                    min="0"
+                    min="1"
                     value={t.amount || ""}
                     onChange={(e) => updateInstallment(i, "amount", e.target.value ? Number(e.target.value) : 0)}
                     className="w-28 px-2 py-1.5 border border-slate-300 rounded text-sm"
+                    placeholder="Montant"
                   />
                   <input
                     type="date"
@@ -308,6 +322,11 @@ export default function EditFeePage() {
               <p className="text-xs text-slate-500">
                 Somme tranches = {installmentsSum} {!installmentsValid && totalAmount > 0 && `(doit être ${totalAmount})`}
               </p>
+              {hasZeroOrNegativeInstallment && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Le montant d&apos;une tranche ne peut pas être égal à 0.
+                </p>
+              )}
             </div>
           )}
         </div>

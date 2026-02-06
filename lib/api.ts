@@ -29,6 +29,9 @@ import type {
   AdminClassDetailResponse,
   CreateClassRequestBody,
   UpdateClassRequestBody,
+  AdminClassRequiredDocumentsResponse,
+  AddClassRequiredDocumentRequestBody,
+  ClassRequiredDocumentsBulkRequestBody,
   AdminFeeTypesListResponse,
   AdminFeeTypeDetailResponse,
   CreateFeeTypeRequestBody,
@@ -48,6 +51,19 @@ import type {
   AdminClassStudentsResponse,
   CreateStudentRequestBody,
   UpdateStudentRequestBody,
+  AdminStudentFeesListResponse,
+  AdminStudentFeeDetailResponse,
+  CreateStudentFeeRequestBody,
+  UpdateStudentFeeRequestBody,
+  AdminStudentGroupFeesListResponse,
+  AdminStudentGroupFeeDetailResponse,
+  CreateStudentGroupFeeRequestBody,
+  UpdateStudentGroupFeeRequestBody,
+  AdminInscriptionDocumentsStatisticsResponse,
+  AdminInscriptionDocumentsListResponse,
+  AdminInscriptionDocumentDetailResponse,
+  CreateInscriptionDocumentRequestBody,
+  UpdateInscriptionDocumentRequestBody,
 } from "./types";
 
 const TOKEN_KEY = "schoolpay_token";
@@ -629,6 +645,92 @@ export const api = {
       });
     },
 
+    getClassRequiredDocuments(
+      token: string | null,
+      classId: string | number
+    ): Promise<AdminClassRequiredDocumentsResponse> {
+      return request<AdminClassRequiredDocumentsResponse>(
+        `/api/v1/admin/classes/${classId}/required-documents`,
+        { method: "GET", token }
+      );
+    },
+
+    getClassAvailableDocuments(
+      token: string | null,
+      classId: string | number
+    ): Promise<AdminClassRequiredDocumentsResponse> {
+      return request<AdminClassRequiredDocumentsResponse>(
+        `/api/v1/admin/classes/${classId}/required-documents/available-documents`,
+        { method: "GET", token }
+      );
+    },
+
+    async addClassRequiredDocument(
+      token: string | null,
+      classId: string | number,
+      body: AddClassRequiredDocumentRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${classId}/required-documents`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async addClassRequiredDocumentsBulk(
+      token: string | null,
+      classId: string | number,
+      body: ClassRequiredDocumentsBulkRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${classId}/required-documents/bulk`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateClassRequiredDocumentsBulk(
+      token: string | null,
+      classId: string | number,
+      body: ClassRequiredDocumentsBulkRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/classes/${classId}/required-documents/bulk`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteClassRequiredDocument(
+      token: string | null,
+      classId: string | number,
+      requiredDocId: number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(
+        `/api/v1/admin/classes/${classId}/required-documents/${requiredDocId}`,
+        { method: "DELETE", token, withCsrf: true }
+      );
+    },
+
+    async restoreClassRequiredDocument(
+      token: string | null,
+      classId: string | number,
+      requiredDocId: number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(
+        `/api/v1/admin/classes/${classId}/required-documents/${requiredDocId}/restore`,
+        { method: "POST", body: JSON.stringify({}), token, withCsrf: true }
+      );
+    },
+
     // Types de frais (fee-types) - school_admin / superadmin
     getFeeTypes(
       token: string | null,
@@ -695,6 +797,96 @@ export const api = {
     ): Promise<{ status: string; message?: string }> {
       await fetchCsrfCookie();
       return request(`/api/v1/admin/fee-types/${id}/restore`, {
+        method: "POST",
+        body: JSON.stringify({}),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    // Documents d'inscription (super_admin)
+    getInscriptionDocumentsStatistics(
+      token: string | null
+    ): Promise<AdminInscriptionDocumentsStatisticsResponse> {
+      return request<AdminInscriptionDocumentsStatisticsResponse>(
+        "/api/v1/admin/inscription-documents/statistics",
+        { method: "GET", token }
+      );
+    },
+
+    getInscriptionDocuments(
+      token: string | null,
+      page = 1,
+      params?: { status?: string; search?: string; sort_by?: string; sort_dir?: string; per_page?: number }
+    ): Promise<AdminInscriptionDocumentsListResponse> {
+      const sp = new URLSearchParams();
+      sp.set("page", String(page));
+      if (params?.status) sp.set("status", params.status);
+      if (params?.search) sp.set("search", params.search);
+      if (params?.sort_by) sp.set("sort_by", params.sort_by);
+      if (params?.sort_dir) sp.set("sort_dir", params.sort_dir);
+      if (params?.per_page) sp.set("per_page", String(params.per_page));
+      return request<AdminInscriptionDocumentsListResponse>(
+        `/api/v1/admin/inscription-documents?${sp.toString()}`,
+        { method: "GET", token }
+      );
+    },
+
+    getInscriptionDocument(
+      token: string | null,
+      id: string | number
+    ): Promise<AdminInscriptionDocumentDetailResponse> {
+      return request<AdminInscriptionDocumentDetailResponse>(
+        `/api/v1/admin/inscription-documents/${id}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createInscriptionDocument(
+      token: string | null,
+      body: CreateInscriptionDocumentRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request("/api/v1/admin/inscription-documents", {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateInscriptionDocument(
+      token: string | null,
+      id: string | number,
+      body: UpdateInscriptionDocumentRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/inscription-documents/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteInscriptionDocument(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/inscription-documents/${id}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreInscriptionDocument(
+      token: string | null,
+      id: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/inscription-documents/${id}/restore`, {
         method: "POST",
         body: JSON.stringify({}),
         token,
@@ -946,6 +1138,160 @@ export const api = {
     ): Promise<{ status: string; message?: string }> {
       await fetchCsrfCookie();
       return request(`/api/v1/admin/students/${id}/disapprove`, {
+        method: "POST",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    getStudentFees(
+      token: string | null,
+      studentId: string | number,
+      page = 1
+    ): Promise<AdminStudentFeesListResponse> {
+      return request<AdminStudentFeesListResponse>(
+        `/api/v1/admin/students/${studentId}/fees?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getStudentFee(
+      token: string | null,
+      studentId: string | number,
+      feeId: string | number
+    ): Promise<AdminStudentFeeDetailResponse> {
+      return request<AdminStudentFeeDetailResponse>(
+        `/api/v1/admin/students/${studentId}/fees/${feeId}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createStudentFee(
+      token: string | null,
+      studentId: string | number,
+      body: CreateStudentFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${studentId}/fees`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateStudentFee(
+      token: string | null,
+      studentId: string | number,
+      feeId: string | number,
+      body: UpdateStudentFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${studentId}/fees/${feeId}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteStudentFee(
+      token: string | null,
+      studentId: string | number,
+      feeId: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${studentId}/fees/${feeId}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreStudentFee(
+      token: string | null,
+      studentId: string | number,
+      feeId: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/students/${studentId}/fees/${feeId}/restore`, {
+        method: "POST",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    getStudentGroupFees(
+      token: string | null,
+      groupId: string | number,
+      page = 1
+    ): Promise<AdminStudentGroupFeesListResponse> {
+      return request<AdminStudentGroupFeesListResponse>(
+        `/api/v1/admin/student-groups/${groupId}/fees?page=${page}`,
+        { method: "GET", token }
+      );
+    },
+
+    getStudentGroupFee(
+      token: string | null,
+      groupId: string | number,
+      feeId: string | number
+    ): Promise<AdminStudentGroupFeeDetailResponse> {
+      return request<AdminStudentGroupFeeDetailResponse>(
+        `/api/v1/admin/student-groups/${groupId}/fees/${feeId}`,
+        { method: "GET", token }
+      );
+    },
+
+    async createStudentGroupFee(
+      token: string | null,
+      groupId: string | number,
+      body: CreateStudentGroupFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${groupId}/fees`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async updateStudentGroupFee(
+      token: string | null,
+      groupId: string | number,
+      feeId: string | number,
+      body: UpdateStudentGroupFeeRequestBody
+    ): Promise<{ status: string; message?: string; data?: unknown }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${groupId}/fees/${feeId}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async deleteStudentGroupFee(
+      token: string | null,
+      groupId: string | number,
+      feeId: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${groupId}/fees/${feeId}`, {
+        method: "DELETE",
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async restoreStudentGroupFee(
+      token: string | null,
+      groupId: string | number,
+      feeId: string | number
+    ): Promise<{ status: string; message?: string }> {
+      await fetchCsrfCookie();
+      return request(`/api/v1/admin/student-groups/${groupId}/fees/${feeId}/restore`, {
         method: "POST",
         token,
         withCsrf: true,

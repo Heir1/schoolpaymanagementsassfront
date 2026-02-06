@@ -1,3 +1,5 @@
+1. Student crud
+
 GET /api/v1/admin/students : 
 
 {
@@ -209,5 +211,563 @@ GET /api/v1/admin/classes/1/students/
             }
         ],
         "has_missing_documents": true
+    }
+}
+
+
+2. student fees : Cette partie consiste à assigner un frais à un etudiant ( c'est reservé). On peut se dire que étudiant ne paiera que le montant "x". Donc prière de reprendre exactement la meme logique que "/dashboard/fees/new" seulement on ne doit pas avoir le champs "Classes associées" puisque l'étudiant est déjà lié à une classe.
+
+/api/v1/admin/students/1/fees : 
+
+{
+    "status": "success",
+    "message": "Liste des frais de l'étudiant récupérée avec succès",
+    "data": {
+        "student": {
+            "id": 1,
+            "code": "ECOLE-202412-ABCD",
+            "full_name": "John Doe Michael",
+            "class": {
+                "id": 1,
+                "name": "Premier primaire 2024-2025",
+                "school": {
+                    "id": 1,
+                    "name": "École Primaire Sainte Thérèse"
+                }
+            }
+        },
+        "fees": [
+            {
+                "id": 1,
+                "student_id": 1,
+                "amount": 800000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent"
+                },
+                "installments": [
+                    {
+                        "id": 10,
+                        "installment_no": 1,
+                        "amount": 800000,
+                        "due_date": "2024-12-31"
+                    }
+                ],
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-12T16:09:43+00:00",
+                "updated_at": "2026-01-12T16:30:43+00:00"
+            }
+        ],
+        "pagination": {
+            "total": 1,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1,
+            "from": 1,
+            "to": 1
+        }
+    }
+}
+
+
+POST /api/v1/admin/students/1/fees et PUT /api/v1/admin/students/1/fees/1 : 
+
+{
+    "fee_type_id": 1,
+    "amount": 600000,
+    "due_date": "2024-12-31",
+    "installments": [
+        {
+            "installment_no": 1,
+            "amount": 300000,
+            "due_date": "2024-06-30"
+        },
+        {
+            "installment_no": 2,
+            "amount": 300000,
+            "due_date": "2024-12-31"
+        }
+    ]
+}
+
+
+{
+    "fee_type_id": 1,
+    "amount": 600000,
+    "due_date": "2024-12-31",
+}
+
+
+GET /api/v1/admin/students/1/fees/1
+
+POST /api/v1/admin/students/1/fees/1/restore
+
+DELETE /api/v1/admin/students/1/fees/1 :
+
+{
+    "status": "success",
+    "message": "Frais étudiant récupéré avec succès",
+    "data": {
+        "id": 1,
+        "student_id": 1,
+        "amount": 800000,
+        "due_date": "2024-12-31",
+        "fee_type": {
+            "id": 1,
+            "name": "Frais de scolarité",
+            "description": "Frais annuels de scolarité pour l'année 2024-2025",
+            "payable_by": "parent"
+        },
+        "installments": [
+            {
+                "id": 10,
+                "installment_no": 1,
+                "amount": 800000,
+                "due_date": "2024-12-31",
+                "created_at": "2026-01-12T16:41:40+00:00",
+                "updated_at": "2026-01-12T16:41:40+00:00"
+            }
+        ],
+        "student": {
+            "id": 1,
+            "code": "ECOLE-202412-ABCD",
+            "full_name": "John Doe Michael",
+            "class": {
+                "id": 1,
+                "name": "Premier primaire 2024-2025"
+            }
+        },
+        "created_by": {
+            "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "full_name": "Test"
+        },
+        "updated_by": {
+            "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "full_name": "Test"
+        },
+        "created_at": "2026-01-12T16:09:43+00:00",
+        "updated_at": "2026-01-12T16:30:43+00:00",
+        "deleted_at": null
+    }
+}
+
+
+
+3. Student group fees : Cette partie consiste à assigner un frais à un groupe des etudiants avec le endpoint "/api/v1/admin/student-groups" . Donc prière de reprendre exactement la meme logique que "/dashboard/fees/new" seulement on ne doit pas avoir le champs "Classes associées" puisque l'étudiant est déjà lié à une classe.
+
+POST /api/v1/admin/student-groups/1/fees et PUT /api/v1/admin/student-groups/1/fees/1
+
+{
+    "fee_type_id": 1,
+    "amount": 1200000,
+    "due_date": "2024-12-31",
+}
+
+{
+    "fee_type_id": 1,
+    "amount": 1200000,
+    "due_date": "2024-12-31",
+    "installments": [
+        {
+            "installment_no": 1,
+            "amount": 400000,
+            "due_date": "2024-06-30"
+        },
+        {
+            "installment_no": 2,
+            "amount": 400000,
+            "due_date": "2024-09-30"
+        },
+        {
+            "installment_no": 3,
+            "amount": 400000,
+            "due_date": "2024-12-31"
+        }
+    ]
+}
+
+
+GET /api/v1/admin/student-groups/1/fees/1
+
+{
+    "status": "success",
+    "message": "Frais de groupe récupéré avec succès",
+    "data": {
+        "id": 1,
+        "group_id": 1,
+        "amount": 1200000,
+        "due_date": "2024-12-31",
+        "fee_type": {
+            "id": 1,
+            "name": "Frais de scolarité",
+            "description": "Frais annuels de scolarité pour l'année 2024-2025",
+            "payable_by": "parent"
+        },
+        "installments": [
+            {
+                "id": 10,
+                "installment_no": 1,
+                "amount": 600000,
+                "due_date": "2024-06-30",
+                "created_at": "2026-01-13T14:03:10+00:00",
+                "updated_at": "2026-01-13T14:03:10+00:00"
+            },
+            {
+                "id": 11,
+                "installment_no": 2,
+                "amount": 600000,
+                "due_date": "2024-09-30",
+                "created_at": "2026-01-13T14:03:10+00:00",
+                "updated_at": "2026-01-13T14:03:10+00:00"
+            }
+        ],
+        "student_group": {
+            "id": 1,
+            "name": "Handycapé",
+            "description": "Il s'agit d'un groupe des élèves Handycapés",
+            "school": {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse"
+            }
+        },
+        "created_by": {
+            "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "full_name": "Test"
+        },
+        "updated_by": {
+            "id": "ad01f75b-041a-4b09-8171-efe09fa4a15c",
+            "full_name": "Test"
+        },
+        "created_at": "2026-01-13T13:55:45+00:00",
+        "updated_at": "2026-01-13T13:55:45+00:00",
+        "deleted_at": null
+    }
+}
+
+
+GET /api/v1/admin/student-groups/1/fees
+{
+    "status": "success",
+    "message": "Liste des frais du groupe d'étudiants récupérée avec succès",
+    "data": {
+        "student_group": {
+            "id": 1,
+            "name": "Handycapé",
+            "description": "Il s'agit d'un groupe des élèves Handycapés",
+            "school": {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse"
+            },
+            "students_count": 1
+        },
+        "fees": [
+            {
+                "id": 1,
+                "group_id": 1,
+                "amount": 1200000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent"
+                },
+                "installments": [
+                    {
+                        "id": 10,
+                        "installment_no": 1,
+                        "amount": 600000,
+                        "due_date": "2024-06-30"
+                    },
+                    {
+                        "id": 11,
+                        "installment_no": 2,
+                        "amount": 600000,
+                        "due_date": "2024-09-30"
+                    }
+                ],
+                "created_by": "Test",
+                "updated_by": "Test",
+                "created_at": "2026-01-13T13:55:45+00:00",
+                "updated_at": "2026-01-13T13:55:45+00:00"
+            }
+        ],
+        "pagination": {
+            "total": 1,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1,
+            "from": 1,
+            "to": 1
+        }
+    }
+}
+
+
+
+GET /api/v1/admin/students/2/fee-types/1/applicable-fees : pour enrichir davantage :
+
+{
+    "status": "success",
+    "message": "Frais applicables récupérés avec succès",
+    "data": {
+        "student": {
+            "id": 2,
+            "code": "ECOLE-202412-ABD",
+            "full_name": "Ouria Umba N'kele",
+            "class": {
+                "id": 1,
+                "name": "Premier primaire 2024-2025"
+            },
+            "student_group": {
+                "id": 1,
+                "name": "Handycapé"
+            }
+        },
+        "fee_type": {
+            "id": 1,
+            "name": "Frais de scolarité",
+            "payable_by": "parent"
+        },
+        "classification": "group_fees",
+        "source": {
+            "type": "student_group",
+            "id": 1,
+            "name": "Handycapé"
+        },
+        "fees": [
+            {
+                "id": 1,
+                "amount": 1200000,
+                "due_date": "2024-12-31",
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent"
+                },
+                "installments": [
+                    {
+                        "id": 10,
+                        "installment_no": 1,
+                        "original_amount": 600000,
+                        "amount_paid": 0,
+                        "remaining_amount": 600000,
+                        "due_date": "2024-06-30",
+                        "payment_status": "unpaid",
+                        "is_overdue": true,
+                        "group_fee_id": 1
+                    },
+                    {
+                        "id": 11,
+                        "installment_no": 2,
+                        "original_amount": 600000,
+                        "amount_paid": 0,
+                        "remaining_amount": 600000,
+                        "due_date": "2024-09-30",
+                        "payment_status": "unpaid",
+                        "is_overdue": true,
+                        "group_fee_id": 1
+                    }
+                ],
+                "payment_summary": {
+                    "total_amount": 1200000,
+                    "amount_paid": 0,
+                    "remaining_amount": 1200000,
+                    "payment_status": "unpaid",
+                    "invoice_id": null
+                },
+                "installments_summary": {
+                    "total_installments": 2,
+                    "paid_installments": 0,
+                    "partially_paid_installments": 0,
+                    "unpaid_installments": 2
+                },
+                "created_at": "2026-01-13T13:55:45+00:00",
+                "updated_at": "2026-01-13T13:55:45+00:00",
+                "group_id": 1
+            }
+        ],
+        "payment_overview": {
+            "total_amount": 1200000,
+            "total_paid": 0,
+            "total_remaining": 1200000,
+            "payment_status_summary": {
+                "unpaid": 1
+            }
+        },
+        "fees_count": 1
+    }
+}
+
+GET /api/v1/admin/students/2/applicable-fees
+
+{
+    "status": "success",
+    "message": "Tous les frais applicables récupérés avec succès",
+    "data": {
+        "student": {
+            "id": 2,
+            "code": "ECOLE-202412-ABD",
+            "full_name": "Ouria Umba N'kele",
+            "class": {
+                "id": 1,
+                "name": "Premier primaire 2024-2025",
+                "school": {
+                    "id": 1,
+                    "name": "École Primaire Sainte Thérèse"
+                }
+            },
+            "student_group": {
+                "id": 1,
+                "name": "Handycapé"
+            }
+        },
+        "fee_types": [
+            {
+                "fee_type": {
+                    "id": 1,
+                    "name": "Frais de scolarité",
+                    "payable_by": "parent"
+                },
+                "classification": "group_fees",
+                "source": {
+                    "type": "student_group",
+                    "id": 1,
+                    "name": "Handycapé"
+                },
+                "fees": [
+                    {
+                        "id": 1,
+                        "amount": 1200000,
+                        "due_date": "2024-12-31",
+                        "installments": [
+                            {
+                                "id": 10,
+                                "installment_no": 1,
+                                "original_amount": 600000,
+                                "amount_paid": 0,
+                                "remaining_amount": 600000,
+                                "due_date": "2024-06-30",
+                                "payment_status": "unpaid",
+                                "is_overdue": true,
+                                "group_fee_id": 1
+                            },
+                            {
+                                "id": 11,
+                                "installment_no": 2,
+                                "original_amount": 600000,
+                                "amount_paid": 0,
+                                "remaining_amount": 600000,
+                                "due_date": "2024-09-30",
+                                "payment_status": "unpaid",
+                                "is_overdue": true,
+                                "group_fee_id": 1
+                            }
+                        ],
+                        "payment_summary": {
+                            "total_amount": 1200000,
+                            "amount_paid": 0,
+                            "remaining_amount": 1200000,
+                            "payment_status": "unpaid",
+                            "invoice_id": null
+                        },
+                        "installments_summary": {
+                            "total_installments": 2,
+                            "paid_installments": 0,
+                            "partially_paid_installments": 0,
+                            "unpaid_installments": 2
+                        },
+                        "created_at": "2026-01-13T13:55:45+00:00",
+                        "updated_at": "2026-01-13T13:55:45+00:00",
+                        "group_id": 1
+                    }
+                ],
+                "payment_summary": {
+                    "total_amount": 1200000,
+                    "amount_paid": 0,
+                    "remaining_amount": 1200000,
+                    "payment_status_summary": {
+                        "unpaid": 1
+                    }
+                },
+                "fees_count": 1
+            },
+            {
+                "fee_type": {
+                    "id": 2,
+                    "name": "Frais de scolarité 2",
+                    "payable_by": "parent"
+                },
+                "classification": "class_fees",
+                "source": {
+                    "type": "class",
+                    "id": 1,
+                    "name": "Premier primaire 2024-2025"
+                },
+                "fees": [
+                    {
+                        "id": 5,
+                        "amount": 500000,
+                        "due_date": "2024-12-31",
+                        "installments": [
+                            {
+                                "id": 4,
+                                "installment_no": 1,
+                                "original_amount": 500000,
+                                "amount_paid": 0,
+                                "remaining_amount": 500000,
+                                "due_date": "2024-12-31",
+                                "payment_status": "unpaid",
+                                "is_overdue": true,
+                                "fee_id": 5
+                            }
+                        ],
+                        "payment_summary": {
+                            "total_amount": 500000,
+                            "amount_paid": 0,
+                            "remaining_amount": 500000,
+                            "payment_status": "unpaid",
+                            "invoice_id": null
+                        },
+                        "installments_summary": {
+                            "total_installments": 1,
+                            "paid_installments": 0,
+                            "partially_paid_installments": 0,
+                            "unpaid_installments": 1
+                        },
+                        "created_at": "2026-01-08T17:19:47+00:00",
+                        "updated_at": "2026-01-08T17:19:47+00:00",
+                        "associated_classes": [
+                            {
+                                "id": 1,
+                                "name": "Premier primaire 2024-2025"
+                            }
+                        ]
+                    }
+                ],
+                "payment_summary": {
+                    "total_amount": 500000,
+                    "amount_paid": 0,
+                    "remaining_amount": 500000,
+                    "payment_status_summary": {
+                        "unpaid": 1
+                    }
+                },
+                "fees_count": 1
+            }
+        ],
+        "payment_overview": {
+            "total_amount": 1700000,
+            "total_paid": 0,
+            "total_remaining": 1700000,
+            "payment_status_summary": {
+                "paid": 0,
+                "partially_paid": 0,
+                "unpaid": 2
+            }
+        },
+        "total_fee_types": 2
     }
 }
