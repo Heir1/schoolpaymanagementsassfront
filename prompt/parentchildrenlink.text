@@ -1,0 +1,249 @@
+## Système de Liaison Parent-Enfant
+Création d'une interface frontend pour permettre aux parents de lier/délier leurs enfants à leur compte, avec un flux en 4 étapes : recherche d'école → sélection de classe → sélection d'élève → gestion des liens.
+
+## 🎯 Objectif
+Développer une interface intuitive, responsive et user-friendly pour le processus complet de liaison parent-enfant.
+
+## 📊 API Endpoints & Réponses
+
+### 1. **Recherche Écoles** (Autocomplétion)
+```
+GET /api/v1/parent/schools/search?search=terme
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "data": {
+        "schools": [
+            {
+                "id": 1,
+                "name": "École Primaire Sainte Thérèse",
+                "type": "Primaire",
+                "address": "Commune de Lingwala, Kinshasa",
+                "phone": "+243 81 700 0011",
+                "logo_url": null
+            }
+        ],
+        "count": 1
+    },
+    "message": "Écoles trouvées avec succès"
+}
+```
+
+### 2. **Classes d'une École**
+```
+GET /api/v1/parent/schools/{schoolId}/classes
+```
+**Réponse (groupée par niveau) :**
+```json
+{
+    "status": "success",
+    "data": {
+        "school": { "id": 1, "name": "École Primaire Sainte Thérèse" },
+        "classes_by_level": [
+            {
+                "level": "Primaire",
+                "classes": [
+                    {
+                        "id": 1,
+                        "name": "Premier primaire 2024-2025",
+                        "level": "Primaire",
+                        "school_year": { "id": 1, "year_label": "2024-2025" }
+                    }
+                ]
+            }
+        ],
+        "total_classes": 3
+    }
+}
+```
+
+### 3. **Étudiants d'une Classe**
+```
+GET /api/v1/parent/classes/{classId}/students
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "data": {
+        "class": { "id": 1, "name": "Premier primaire 2024-2025", "level": "Primaire" },
+        "students": [
+            {
+                "id": 1,
+                "student_code": "ECOLE-202412-ABCD",
+                "full_name": "John Michael Doe",
+                "first_name": "John",
+                "last_name": "Doe",
+                "middle_name": "Michael",
+                "gender": "male",
+                "birth_date": "2010-05-15T00:00:00.000000Z",
+                "age": 15,
+                "is_linked": false,
+                "can_be_linked": true
+            }
+        ],
+        "total_students": 2
+    }
+}
+```
+
+### 4. **Vérification Préalable**
+```
+GET /api/v1/parent/children/{studentId}/check
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "data": {
+        "student": { ... },
+        "link_status": {
+            "can_link": true,
+            "status": "available|already_linked|previously_linked",
+            "message": "Message explicatif"
+        }
+    }
+}
+```
+
+### 5. **Lier un Enfant**
+```
+POST /api/v1/parent/children/link
+Body: { "student_id": 1 }
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "message": "Enfant lié à votre compte avec succès",
+    "data": {
+        "link": {
+            "student": { ... },
+            "is_primary": true,
+            "linked_at": "2026-02-09T15:56:03.489633Z"
+        }
+    }
+}
+```
+
+### 6. **Délier un Enfant**
+```
+DELETE /api/v1/parent/children/{studentId}/unlink
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "message": "Enfant délié de votre compte avec succès",
+    "data": {
+        "student_id": "1",
+        "was_primary": 1,
+        "unlinked_at": "2026-02-09T16:15:07.481335Z"
+    }
+}
+```
+
+### 7. **Liste des Enfants Liés**
+```
+GET /api/v1/parent/children
+```
+**Réponse :**
+```json
+{
+    "status": "success",
+    "data": {
+        "parent": { "id": "...", "name": "N'kele Ngoma", "email": null },
+        "children": {
+            "all": [...],
+            "primary": [...],
+            "secondary": []
+        },
+        "counts": { "total": 1, "primary": 1, "secondary": 0 }
+    }
+}
+```
+
+### 8. **Statistiques**
+```
+GET /api/v1/parent/statistics
+```
+**Réponse complète avec graphiques :**
+```json
+{
+    "status": "success",
+    "data": {
+        "summary": { "total_children": 1, "primary_children": 1, "secondary_children": 0 },
+        "school_distribution": [...],
+        "class_distribution": [...],
+        "level_distribution": [...],
+        "age_statistics": { "average_age": 16, "min_age": 16, "max_age": 16 },
+        "recent_activity": { "recently_added": [...] },
+        "charts_data": {
+            "school_pie_chart": [{ "name": "...", "value": 1 }],
+            "level_bar_chart": [{ "level": "Primaire", "count": 1 }]
+        }
+    }
+}
+```
+
+## 🎨 UX/UI Requirements
+
+### **Flux Principal (Wizard en 4 étapes)**
+
+#### **Étape 1 : Recherche École**
+- 🔍 Champ recherche avec autocomplétion en temps réel
+- ⏳ Debounce 300ms pour éviter trop de requêtes
+- 📱 Design mobile-first avec suggestions sous le champ
+- 🏫 Carte résultat : logo + nom + type + adresse + bouton "Sélectionner"
+- 📍 Indicateur "Aucune école trouvée" / "1 école trouvée"
+
+#### **Étape 2 : Sélection Classe**
+- 🏫 En-tête avec nom de l'école sélectionnée
+- 📊 Groupement par niveau (accordéon/onglets)
+- 🗓️ Pour chaque classe : nom + année scolaire + nombre d'élèves
+- 🎯 Badge "Actif" si l'année scolaire est en cours
+- 🔄 Bouton "Voir les élèves" avec feedback visuel
+
+#### **Étape 3 : Sélection Étudiant**
+- 📚 En-tête avec [École > Classe] (breadcrumb)
+- 👨‍🎓 Tableau/liste d'élèves avec :
+  - Avatar/initiale
+  - Nom complet + code étudiant
+  - Âge + date de naissance
+  - Badge "Déjà lié" (grisé) / "Disponible" (vert)
+- ✅ Checkbox ou bouton "Sélectionner" par élève
+- 📝 Option "Vérifier" avant liaison (modal de confirmation)
+
+#### **Étape 4 : Confirmation & Résultat**
+- 👤 Card récapitulative de l'élève
+- 📝 Message personnalisé selon statut :
+  - "Nouvelle liaison"
+  - "Restauration de liaison précédente"
+  - "Déjà lié" (erreur)
+- 🎯 Option "Définir comme parent principal" (checkbox)
+- 🎉 Animation de succès après liaison
+- 🔗 Bouton "Voir mes enfants" / "Lier un autre enfant"
+
+### **Dashboard Parent**
+
+#### **Section "Mes Enfants"**
+- 📊 Statistiques en haut : total/principal/secondaire
+- 🎯 Filtres : Tous / Principaux / Secondaires
+- 👥 Liste avec :
+  - Photo élève / avatar avec initiales
+  - Nom + classe + école
+  - Badge "Parent principal" (étoile/or)
+  - Date de liaison ("Il y a 2 jours")
+  - Menu d'actions (⋮) : Délier / Rendre principal
+- 🗑️ Modal de confirmation pour déliage
+- 📱 Design card sur mobile, tableau sur desktop
+
+#### **Section "Statistiques"**
+- 📈 Graphique circulaire : Répartition par école
+- 📊 Graphique à barres : Répartition par niveau
+- 📋 Tableau : Distribution par classe
+- 📅 Section "Activité récente" : 5 dernières liaisons
+- 🎂 Section "Âges" : moyenne/min/max
+- 💾 Option d'export (PDF/Excel) si pertinent

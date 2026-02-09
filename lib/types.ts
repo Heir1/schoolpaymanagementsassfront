@@ -1040,3 +1040,176 @@ export interface AdminStudentGroupFeeDetailResponse {
   };
   message: string;
 }
+
+// Parent API - Liaison parent-enfant
+export interface ParentSchoolSearchItem {
+  id: number;
+  name: string;
+  type: string;
+  address: string | null;
+  phone: string | null;
+  logo_url: string | null;
+}
+
+export interface ParentSchoolsSearchResponse {
+  status: string;
+  data: { schools: ParentSchoolSearchItem[]; count: number };
+  message: string;
+}
+
+export interface ParentSchoolClassesClassItem {
+  id: number;
+  name: string;
+  level: string;
+  school_year: { id: number; year_label: string };
+}
+
+export interface ParentSchoolClassesLevelGroup {
+  level: string;
+  classes: ParentSchoolClassesClassItem[];
+}
+
+export interface ParentSchoolClassesResponse {
+  status: string;
+  data: {
+    school: { id: number; name: string };
+    classes_by_level: ParentSchoolClassesLevelGroup[];
+    total_classes: number;
+  };
+  message: string;
+}
+
+export interface ParentClassStudentItem {
+  id: number;
+  student_code: string;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string | null;
+  gender: string;
+  birth_date: string;
+  age: number;
+  is_linked: boolean;
+  can_be_linked: boolean;
+}
+
+export interface ParentClassStudentsResponse {
+  status: string;
+  data: {
+    class: { id: number; name: string; level: string };
+    students: ParentClassStudentItem[];
+    total_students: number;
+  };
+  message: string;
+}
+
+export interface ParentChildCheckResponse {
+  status: string;
+  data: {
+    student: ParentClassStudentItem & Record<string, unknown>;
+    link_status: {
+      can_link: boolean;
+      status: string;
+      message: string;
+    };
+  };
+  message: string;
+}
+
+export interface ParentLinkChildResponse {
+  status: string;
+  message: string;
+  data: {
+    link: {
+      student: ParentClassStudentItem & Record<string, unknown>;
+      is_primary: boolean;
+      linked_at: string;
+    };
+  };
+}
+
+export interface ParentUnlinkChildResponse {
+  status: string;
+  message: string;
+  data: {
+    student_id: string;
+    was_primary: number;
+    unlinked_at: string;
+  };
+}
+
+export interface ParentLinkedChildItem {
+  id: number;
+  student_code: string;
+  full_name: string;
+  first_name?: string;
+  last_name?: string;
+  class?: { id: number; name: string };
+  school?: { id: number; name: string };
+  is_primary?: boolean;
+  linked_at?: string;
+}
+
+export interface ParentChildrenResponse {
+  status: string;
+  data: {
+    parent: { id: string; name: string; email: string | null };
+    children: {
+      all: ParentLinkedChildItem[];
+      primary: ParentLinkedChildItem[];
+      secondary: ParentLinkedChildItem[];
+    };
+    counts: { total: number; primary: number; secondary: number };
+  };
+  message: string;
+}
+
+export interface ParentStatisticsResponse {
+  status: string;
+  data: {
+    summary: {
+      total_children: number;
+      primary_children: number;
+      secondary_children: number;
+      average_children_per_parent?: string;
+    };
+    school_distribution: {
+      school_id: number;
+      school_name: string;
+      student_count: number;
+      primary_count: string;
+      percentage: number;
+    }[];
+    class_distribution: {
+      class_id: number;
+      class_name: string;
+      level: string;
+      student_count: number;
+    }[];
+    level_distribution: {
+      level: string;
+      student_count: number;
+      classes: string;
+    }[];
+    age_statistics: {
+      average_age: number;
+      min_age: number;
+      max_age: number;
+      age_range?: number;
+    };
+    recent_activity: {
+      recently_added: {
+        student_name: string;
+        class_name: string;
+        linked_at: string;
+        days_ago: number;
+      }[];
+      last_update?: string;
+    };
+    charts_data: {
+      school_pie_chart: { name: string; value: number }[];
+      level_bar_chart: { level: string; count: number }[];
+    };
+  };
+  message: string;
+}

@@ -64,6 +64,14 @@ import type {
   AdminInscriptionDocumentDetailResponse,
   CreateInscriptionDocumentRequestBody,
   UpdateInscriptionDocumentRequestBody,
+  ParentSchoolsSearchResponse,
+  ParentSchoolClassesResponse,
+  ParentClassStudentsResponse,
+  ParentChildCheckResponse,
+  ParentLinkChildResponse,
+  ParentUnlinkChildResponse,
+  ParentChildrenResponse,
+  ParentStatisticsResponse,
 } from "./types";
 
 const TOKEN_KEY = "schoolpay_token";
@@ -1403,6 +1411,69 @@ export const api = {
         body: formData,
         token,
         withCsrf: true,
+      });
+    },
+  },
+
+  parent: {
+    searchSchools(token: string | null, search: string): Promise<ParentSchoolsSearchResponse> {
+      const q = encodeURIComponent(search.trim());
+      return request<ParentSchoolsSearchResponse>(
+        `/api/v1/parent/schools/search?search=${q}`,
+        { method: "GET", token }
+      );
+    },
+
+    getSchoolClasses(token: string | null, schoolId: string | number): Promise<ParentSchoolClassesResponse> {
+      return request<ParentSchoolClassesResponse>(
+        `/api/v1/parent/schools/${schoolId}/classes`,
+        { method: "GET", token }
+      );
+    },
+
+    getClassStudents(token: string | null, classId: string | number): Promise<ParentClassStudentsResponse> {
+      return request<ParentClassStudentsResponse>(
+        `/api/v1/parent/classes/${classId}/students`,
+        { method: "GET", token }
+      );
+    },
+
+    checkChildLink(token: string | null, studentId: string | number): Promise<ParentChildCheckResponse> {
+      return request<ParentChildCheckResponse>(
+        `/api/v1/parent/children/${studentId}/check`,
+        { method: "GET", token }
+      );
+    },
+
+    async linkChild(token: string | null, studentId: number): Promise<ParentLinkChildResponse> {
+      await fetchCsrfCookie();
+      return request<ParentLinkChildResponse>("/api/v1/parent/children/link", {
+        method: "POST",
+        body: JSON.stringify({ student_id: studentId }),
+        token,
+        withCsrf: true,
+      });
+    },
+
+    async unlinkChild(token: string | null, studentId: string | number): Promise<ParentUnlinkChildResponse> {
+      await fetchCsrfCookie();
+      return request<ParentUnlinkChildResponse>(
+        `/api/v1/parent/children/${studentId}/unlink`,
+        { method: "DELETE", token, withCsrf: true }
+      );
+    },
+
+    getChildren(token: string | null): Promise<ParentChildrenResponse> {
+      return request<ParentChildrenResponse>("/api/v1/parent/children", {
+        method: "GET",
+        token,
+      });
+    },
+
+    getStatistics(token: string | null): Promise<ParentStatisticsResponse> {
+      return request<ParentStatisticsResponse>("/api/v1/parent/statistics", {
+        method: "GET",
+        token,
       });
     },
   },

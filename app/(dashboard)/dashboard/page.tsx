@@ -1,7 +1,7 @@
 "use client";
 
 import { api, getToken } from "@/lib/api";
-import type { AdminUsersStatisticsResponse } from "@/lib/types";
+import type { AdminUsersStatisticsResponse, ParentStatisticsResponse } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Building2,
@@ -12,6 +12,8 @@ import {
   TrendingUp,
   Shield,
   Loader2,
+  BarChart3,
+  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -61,6 +63,8 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<AdminUsersStatisticsResponse["data"] | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [parentStats, setParentStats] = useState<ParentStatisticsResponse["data"] | null>(null);
+  const [parentStatsLoading, setParentStatsLoading] = useState(false);
 
   const fetchStats = useCallback(() => {
     const token = getToken();
@@ -73,11 +77,28 @@ export default function DashboardPage() {
       .finally(() => setStatsLoading(false));
   }, []);
 
+  const fetchParentStats = useCallback(() => {
+    const token = getToken();
+    if (!token) return;
+    setParentStatsLoading(true);
+    api.parent
+      .getStatistics(token)
+      .then((res) => setParentStats(res.data))
+      .catch(() => setParentStats(null))
+      .finally(() => setParentStatsLoading(false));
+  }, []);
+
   useEffect(() => {
     if (user?.role.name === "superadmin") {
       fetchStats();
     }
   }, [user?.role.name, fetchStats]);
+
+  useEffect(() => {
+    if (user?.role.name === "parent") {
+      fetchParentStats();
+    }
+  }, [user?.role.name, fetchParentStats]);
 
   if (!user) return null;
 
@@ -279,7 +300,170 @@ export default function DashboardPage() {
         </>
       )}
 
-      {!isSuperadmin && (
+      {user.role.name === "parent" && (
+        <div className="mt-10 space-y-8">
+          {/* Statistiques parent */}
+          {(parentStatsLoading || parentStats) && (
+            <section>
+              <h2 className="font-display text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-schoolpay-accent" />
+                Statistiques
+              </h2>
+              {parentStatsLoading ? (
+                <div className="flex items-center justify-center py-12 rounded-xl bg-white border border-slate-200/80">
+                  <Loader2 className="w-8 h-8 text-schoolpay-accent animate-spin" />
+                </div>
+              ) : parentStats ? (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
+                      <p className="text-2xl font-bold text-slate-900">{parentStats.summary.total_children}</p>
+                      <p className="text-xs text-slate-500">Enfants au total</p>
+                    </div>
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
+                      <p className="text-2xl font-bold text-slate-900">{parentStats.summary.primary_children}</p>
+                      <p className="text-xs text-slate-500">Parent principal</p>
+                    </div>
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
+                      <p className="text-2xl font-bold text-slate-900">{parentStats.summary.secondary_children}</p>
+                      <p className="text-xs text-slate-500">Secondaires</p>
+                    </div>
+                    {parentStats.summary.average_children_per_parent != null && (
+                      <div className="rounded-xl bg-white border border-slate-200/80 shadow-card p-4">
+                        <p className="text-2xl font-bold text-slate-900">{parentStats.summary.average_children_per_parent}</p>
+                        <p className="text-xs text-slate-500">Moy. par parent</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+                        <Building2 className="w-5 h-5 text-schoolpay-accent" />
+                        <h3 className="font-semibold text-slate-900">Répartition par école</h3>
+                      </div>
+                      <div className="p-4">
+                        {parentStats.school_distribution.length === 0 ? (
+                          <p className="text-sm text-slate-500">Aucune donnée</p>
+                        ) : (
+                          <ul className="space-y-3">
+                            {parentStats.school_distribution.map((s) => (
+                              <li key={s.school_id} className="flex items-center justify-between gap-2">
+                                <span className="text-sm font-medium text-slate-900 truncate flex-1">{s.school_name}</span>
+                                <span className="text-sm text-slate-600 shrink-0">
+                                  {s.student_count} élève{s.student_count > 1 ? "s" : ""} · {s.percentage} %
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+                        <GraduationCap className="w-5 h-5 text-schoolpay-accent" />
+                        <h3 className="font-semibold text-slate-900">Répartition par niveau</h3>
+                      </div>
+                      <div className="p-4">
+                        {parentStats.level_distribution.length === 0 ? (
+                          <p className="text-sm text-slate-500">Aucune donnée</p>
+                        ) : (
+                          <ul className="space-y-3">
+                            {parentStats.level_distribution.map((l) => (
+                              <li key={l.level} className="flex items-center gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-slate-900">{l.level}</p>
+                                  {l.classes && <p className="text-xs text-slate-500 truncate">{l.classes}</p>}
+                                </div>
+                                <span className="text-sm text-slate-600 shrink-0">{l.student_count}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {parentStats.class_distribution.length > 0 && (
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+                        <GraduationCap className="w-5 h-5 text-schoolpay-accent" />
+                        <h3 className="font-semibold text-slate-900">Par classe</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                          <thead className="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                              <th className="px-4 py-2 font-semibold text-slate-600">Classe</th>
+                              <th className="px-4 py-2 font-semibold text-slate-600">Niveau</th>
+                              <th className="px-4 py-2 font-semibold text-slate-600 text-right">Élèves</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {parentStats.class_distribution.map((c) => (
+                              <tr key={c.class_id} className="border-b border-slate-100">
+                                <td className="px-4 py-2 text-slate-900">{c.class_name}</td>
+                                <td className="px-4 py-2 text-slate-600">{c.level}</td>
+                                <td className="px-4 py-2 text-right text-slate-600">{c.student_count}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-schoolpay-accent" />
+                        <h3 className="font-semibold text-slate-900">Âges</h3>
+                      </div>
+                      <div className="p-4">
+                        <p className="text-sm text-slate-600">
+                          Moyenne <strong className="text-slate-900">{parentStats.age_statistics.average_age}</strong> ans
+                          {" · "}
+                          Min <strong>{parentStats.age_statistics.min_age}</strong> · Max <strong>{parentStats.age_statistics.max_age}</strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl bg-white border border-slate-200/80 shadow-card overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+                        <UserPlus className="w-5 h-5 text-schoolpay-accent" />
+                        <h3 className="font-semibold text-slate-900">Activité récente</h3>
+                      </div>
+                      <div className="p-4">
+                        {parentStats.recent_activity.recently_added.length === 0 ? (
+                          <p className="text-sm text-slate-500">Aucune liaison récente</p>
+                        ) : (
+                          <ul className="space-y-2">
+                            {parentStats.recent_activity.recently_added.slice(0, 5).map((a, i) => (
+                              <li key={i} className="text-sm">
+                                <span className="font-medium text-slate-900">{a.student_name}</span>
+                                {" · "}
+                                <span className="text-slate-600">{a.class_name}</span>
+                                {" · "}
+                                <span className="text-slate-500">{a.linked_at}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {parentStats.recent_activity.last_update && (
+                          <p className="text-xs text-slate-400 mt-2">Dernière MAJ : {parentStats.recent_activity.last_update}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </section>
+          )}
+        </div>
+      )}
+
+      {!isSuperadmin && user.role.name !== "parent" && (
         <div className="mt-10 rounded-xl bg-slate-50/80 border border-slate-200/80 p-6">
           <p className="text-slate-600 text-sm">
             Les pages de gestion (écoles, classes, élèves, parents) seront
